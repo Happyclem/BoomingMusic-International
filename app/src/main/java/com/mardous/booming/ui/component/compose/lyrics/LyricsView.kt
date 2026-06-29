@@ -167,7 +167,11 @@ fun LyricsView(
                 enableSyllable = settings.enableSyllableLyrics && isPowerSaveMode.not(),
                 enableKaraokeStyle = settings.enableKaraokeStyle,
                 progressiveColoring = settings.progressiveColoring && isPowerSaveMode.not(),
-                showTranslation = settings.showTranslation,
+                translations = if (settings.showTranslation) {
+                    settings.translationFilter.apply(line.translations)
+                } else {
+                    emptyList()
+                },
                 showTransliteration = settings.showTransliteration,
                 enableBlurEffect = settings.blurEffect && disableBlurEffect.not(),
                 enableShadowEffect = settings.shadowEffect && disableAdvancedEffects.not(),
@@ -211,7 +215,7 @@ private fun LyricsLineView(
     enableSyllable: Boolean,
     enableKaraokeStyle: Boolean,
     progressiveColoring: Boolean,
-    showTranslation: Boolean,
+    translations: List<SyncedLyrics.Translation>,
     showTransliteration: Boolean,
     enableBlurEffect: Boolean,
     enableShadowEffect: Boolean,
@@ -306,7 +310,7 @@ private fun LyricsLineView(
                         index = index,
                         selectedIndex = selectedIndex,
                         content = line.content,
-                        translations = if (showTranslation) line.translations else emptyList(),
+                        translations = translations,
                         transliterationContent = if (showTransliteration) line.transliteration else null,
                         backgroundContent = false,
                         enableSyllable = enableSyllable,
@@ -324,14 +328,14 @@ private fun LyricsLineView(
                     )
 
                     if (line.content.hasBackgroundSyllables) {
-                        if (line.translations.isNotEmpty()) {
+                        if (translations.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(lineSpacing))
                         }
                         LyricsLineContentView(
                             index = index,
                             selectedIndex = selectedIndex,
                             content = line.content,
-                            translations = if (showTranslation) line.translations else emptyList(),
+                            translations = translations,
                             transliterationContent = if (showTransliteration) line.transliteration else null,
                             backgroundContent = true,
                             enableSyllable = enableSyllable,

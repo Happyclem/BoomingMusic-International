@@ -86,13 +86,21 @@ class LrcLyricsParser : LyricsParser {
                             val bgText = lineResult.groupValues[3]
                                 .takeIf { it.isNotEmpty() }
 
+                            // Optional language tag on a translation line, e.g. [00:12.00][fr]Text.
+                            // It is captured among the leading bracket blocks; extract it so we can
+                            // attribute the translation to a language (see F2). Untagged lines keep
+                            // lang = null and behave exactly as before.
+                            val lang = LANGUAGE_TAG_PATTERN.find(base)
+                                ?.groupValues?.getOrNull(1)
+                                ?.lowercase(Locale.getDefault())
+
                             var foundAny = false
                             // Extract all timestamps from the line (LRC allows multiple timestamps for one line)
                             val timeMatches = LINE_TIME_PATTERN.findAll(base)
                             for (time in timeMatches) {
                                 val timeMs = parseTime(time)
                                 if (timeMs > LrcNode.INVALID_DURATION) {
-                                    rawLines.add(LrcNode(rawIndex++, timeMs, text, bgText, line))
+                                    rawLines.add(LrcNode(rawIndex++, timeMs, text, bgText, line, lang = lang))
                                     foundAny = true
                                 }
                             }
@@ -214,8 +222,8 @@ class LrcLyricsParser : LyricsParser {
                                     end = newEnd,
                                     duration = newDuration,
                                     content = translationContent,
+                                    // The demoted line was the original, which carries no language.
                                     translations = listOf(
-                                        // LRC has no language tagging convention yet (see F2).
                                         SyncedLyrics.Translation(existing.content, lang = null)
                                     ),
                                     actor = entry.actor ?: existing.actor
@@ -225,7 +233,7 @@ class LrcLyricsParser : LyricsParser {
                                     end = newEnd,
                                     duration = newDuration,
                                     translations = existing.translations +
-                                            SyncedLyrics.Translation(translationContent, lang = null)
+                                            SyncedLyrics.Translation(translationContent, lang = entry.lang)
                                 )
                             }
                         }
@@ -332,6 +340,9 @@ class LrcLyricsParser : LyricsParser {
         private val TIME_PATTERN = Regex("(\\d+):(\\d{2}(?:\\.\\d+)?)")
         private val LINE_PATTERN = Regex("((?:\\[.*?])+)(.*?)(?:\\[bg:(.*?)])?$")
         private val LINE_TIME_PATTERN = Regex("\\[${TIME_PATTERN.pattern}]")
+        // A BCP-47-ish language block on a translation line, e.g. [fr] or [pt-BR].
+        // Restricted to letters (+ optional region) so it never matches a timestamp block.
+        private val LANGUAGE_TAG_PATTERN = Regex("\\[([a-zA-Z]{2,3}(?:-[a-zA-Z]{2,4})?)]")
         private val LINE_ACTOR_PATTERN = Regex("^([vV]\\d+|D|M|F)\\s*:\\s*(.*)")
         private val LINE_WORD_PATTERN = Regex("<${TIME_PATTERN.pattern}>([^<]*)")
         private val BACKGROUND_ONLY_PATTERN = Regex("^\\[bg:(.*?)]\\s*$")
