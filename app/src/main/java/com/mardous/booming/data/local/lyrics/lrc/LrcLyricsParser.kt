@@ -17,7 +17,9 @@ import java.util.Locale
  * - Metadata attributes: `[ar:Artist]`, `[ti:Title]`, `[offset:milliseconds]`, etc.
  * - Multiple timestamps for the same line: `[mm:ss.xx][mm:ss.yy] line content`
  * - Background vocals: `[bg:Background content]` or inline `[00:12.34] Line [bg:Background]`
- * - Translations: Identified by matching timestamps across different lines.
+ * - Translations: Identified by matching timestamps across different lines. The first line at a
+ *   timestamp is the original; every subsequent line sharing that timestamp is stacked as an
+ *   additional translation layer.
  */
 class LrcLyricsParser : LyricsParser {
 
@@ -178,13 +180,12 @@ class LrcLyricsParser : LyricsParser {
                         lines[entry.start] = entry.toLine()
                     }
                 } else {
-                    // If a line already exists at the same timestamp, this entry could be a translation.
-                    // We must check that the new entry is not exactly the same as the previous one
-                    // and that the previous line does not already contain a translation; for now,
-                    // we only handle one translation per line.
+                    // If a line already exists at the same timestamp, this entry is a translation.
+                    // We must check that the new entry is not exactly the same as the previous one;
+                    // additional lines sharing the timestamp are stacked as further translations.
                     val existing = lines[entry.start]
                     if (existing != null && !existing.content.isEmpty &&
-                        existing.content.rawContent != entry.rawLine && existing.translation == null
+                        existing.content.rawContent != entry.rawLine
                     ) {
                         // If the new entry is word-synced, we process it.
                         addChildren(entry, existing.actor)
@@ -193,28 +194,38 @@ class LrcLyricsParser : LyricsParser {
                         // exactly the same; if so, we discard the new entry since it does not
                         // add any real value as a translation.
                         val translationContent = entry.getTextContent()
-                        if (translationContent.content != existing.content.content) {
+                        val isDuplicate = translationContent.content == existing.content.content ||
+                                existing.translations.any { it.content.content == translationContent.content }
+                        if (!isDuplicate) {
                             var newDuration = existing.duration
                             val newEnd = if (existing.end == 0L) entry.end else existing.end
                             if (newEnd != existing.end) {
                                 newDuration = (newEnd - existing.start)
                             }
 
-                            // Heuristic: if the new entry has word-sync tags and the existing one doesn't,
-                            // swap them so the word-synced one is the main content.
-                            if (translationContent.isWordSynced && !existing.isWordSynced) {
+                            // Heuristic: if the new entry has word-sync tags and the existing one
+                            // doesn't, swap them so the word-synced one is the main content. This
+                            // only applies while there is a single layer (the original), so we don't
+                            // demote an already-promoted word-synced line.
+                            if (translationContent.isWordSynced && !existing.isWordSynced &&
+                                existing.translations.isEmpty()
+                            ) {
                                 lines[entry.start] = existing.copy(
                                     end = newEnd,
                                     duration = newDuration,
                                     content = translationContent,
-                                    translation = existing.content,
+                                    translations = listOf(
+                                        // LRC has no language tagging convention yet (see F2).
+                                        SyncedLyrics.Translation(existing.content, lang = null)
+                                    ),
                                     actor = entry.actor ?: existing.actor
                                 )
                             } else {
                                 lines[entry.start] = existing.copy(
                                     end = newEnd,
                                     duration = newDuration,
-                                    translation = translationContent
+                                    translations = existing.translations +
+                                            SyncedLyrics.Translation(translationContent, lang = null)
                                 )
                             }
                         }
@@ -242,7 +253,7 @@ class LrcLyricsParser : LyricsParser {
                             end = firstLine.start,
                             content = SyncedLyrics.EmptyContent,
                             transliteration = null,
-                            translation = null,
+                            translations = emptyList(),
                             actor = firstLine.actor
                         )
                     )

@@ -64,27 +64,38 @@ internal class TtmlNodeTree {
             .singleOrNull { it.closed }
     }
 
-    private fun getClosedTranslation(): TtmlTranslation? {
+    /**
+     * Returns every closed translation, preserving the order in which they appeared in the
+     * document. The translation matching the system locale (if any) is moved to the front so it
+     * is shown first when stacking, without dropping the other layers.
+     */
+    private fun getClosedTranslations(): List<TtmlTranslation> {
         val systemLocale = Locale.getDefault()
         val closedTranslations = accompaniments.values
             .filterIsInstance<TtmlTranslation>()
             .filter { it.closed }
 
-        if (closedTranslations.size == 1) {
-            return closedTranslations.single()
+        if (closedTranslations.size <= 1) {
+            return closedTranslations
         }
 
-        val matchingLocale = closedTranslations.firstOrNull {
+        val matchingIndex = closedTranslations.indexOfFirst {
             Locale.forLanguageTag(it.type.lang).let { locale ->
                 locale == systemLocale || locale.language == systemLocale.language
             }
         }
 
-        if (matchingLocale != null) {
-            return matchingLocale
+        if (matchingIndex <= 0) {
+            return closedTranslations
         }
 
-        return closedTranslations.firstOrNull()
+        // Move the locale-matching translation to the front, keep the rest in document order.
+        return buildList {
+            add(closedTranslations[matchingIndex])
+            closedTranslations.forEachIndexed { index, translation ->
+                if (index != matchingIndex) add(translation)
+            }
+        }
     }
 
     fun addRoot(node: TtmlNode): Boolean {
@@ -229,6 +240,11 @@ internal class TtmlNodeTree {
             if (openTranslation == null) {
                 openTranslation = createTranslation(lang, inLine = true)
             }
+            // Point the "current" translation at the one we're about to fill. Without this, when a
+            // line carries several translations (or reuses a language seen on a previous line),
+            // [openTranslation] and [setText] would keep routing to the previously active language,
+            // dropping this layer's text or leaking it into the main line content.
+            openTranslation?.let { lastTranslationType = it.type }
             return openTranslation?.prepare(openLine.key) == true
         }
         return false
@@ -304,7 +320,7 @@ internal class TtmlNodeTree {
 
         // Flatten the hierarchy to get all lines across all sections
         val lineNodes = sectionNodes.flatMap { it.getChildren(TtmlNode.NODE_LINE) }.sortedBy { it.begin }
-        val translation = getClosedTranslation()
+        val translations = getClosedTranslations()
         val transliteration = getClosedTransliteration()
 
         if (lineNodes.isNotEmpty()) {
@@ -369,7 +385,7 @@ internal class TtmlNodeTree {
                         createSyncedLine(
                             line = line,
                             transliteration = transliteration,
-                            translation = translation,
+                            translations = translations,
                             mainContent = wordsToTextContent(words),
                             actor = actor
                         )
@@ -380,7 +396,7 @@ internal class TtmlNodeTree {
                         createSyncedLine(
                             line = line,
                             transliteration = transliteration,
-                            translation = translation,
+                            translations = translations,
                             mainContent = SyncedLyrics.TextContent(
                                 content = line.text.orEmpty(),
                                 backgroundContent = null,
@@ -408,7 +424,7 @@ internal class TtmlNodeTree {
                             end = firstLine.start,
                             content = SyncedLyrics.EmptyContent,
                             transliteration = null,
-                            translation = null,
+                            translations = emptyList(),
                             actor = firstLine.actor
                         )
                     )
@@ -423,7 +439,7 @@ internal class TtmlNodeTree {
     private fun createSyncedLine(
         line: TtmlNode,
         transliteration: TtmlTransliteration?,
-        translation: TtmlTranslation?,
+        translations: List<TtmlTranslation>,
         mainContent: SyncedLyrics.TextContent,
         actor: LyricsActor?
     ): SyncedLyrics.Line {
@@ -439,13 +455,21 @@ internal class TtmlNodeTree {
                 resolved.takeUnless { it.content == mainContent.content && it.backgroundContent == null }
             }
 
+        // Map every translation that actually resolves to content for this line, keeping its
+        // language and the order produced by getClosedTranslations().
+        val resolvedTranslations = translations.mapNotNull { translation ->
+            resolveAccompaniment(translation)?.let { content ->
+                SyncedLyrics.Translation(content, lang = translation.type.lang)
+            }
+        }
+
         return SyncedLyrics.Line(
             start = line.begin,
             end = line.end,
             duration = line.dur,
             content = mainContent,
             transliteration = resolveAccompaniment(transliteration),
-            translation = resolveAccompaniment(translation),
+            translations = resolvedTranslations,
             actor = actor
         )
     }
