@@ -2,9 +2,17 @@
 
 <img src="metadata/en-US/images/icon.png" width="160" height="160" alt="Booming Music icon">
 
-# 🎵 Booming Music
+# 🎵 Booming Music — International edition
 
 ### Modern design. Pure sound. Fully yours.
+
+> 🌍 **This is a community fork of [Booming Music](https://github.com/mardous/BoomingMusic) by
+> [Christians Martínez Alvarado (mardous)](https://github.com/mardous).** It adds **multilingual
+> lyrics** features on top of the original app. All credit for Booming Music goes to the upstream
+> project; this fork only layers the extras described in
+> [🌐 Multilingual lyrics (this fork)](#-multilingual-lyrics-this-fork) and stays **GPLv3**.
+> Upstream issues: [#474](https://github.com/mardous/BoomingMusic/issues/474),
+> [#475](https://github.com/mardous/BoomingMusic/issues/475).
 
 [![Latest Release](https://img.shields.io/github/v/release/mardous/BoomingMusic?style=for-the-badge&label=Release&logo=github)](https://github.com/mardous/BoomingMusic/releases/latest)
 [![F-Droid version](https://img.shields.io/f-droid/v/com.mardous.booming?style=for-the-badge&label=F-Droid&logo=fdroid)](https://f-droid.org/packages/com.mardous.booming/)
@@ -23,6 +31,7 @@
 
 ## 🗂️ Table of Contents
 
+- [🌐 Multilingual lyrics (this fork)](#-multilingual-lyrics-this-fork)
 - [✨ Key Features](#-key-features)
 - [📸 Screenshots](#-screenshots)
 - [💻 Tech Stack](#-tech-stack)
@@ -52,6 +61,71 @@
 - 🔉 **ReplayGain Support** – Maintain consistent volume across all tracks.
 - 🖼️ **Automatic Artist Images** – Download artist artwork for a polished library look.
 - 🚫 **Library Filtering** – Easily exclude or include folders with blacklist/whitelist options.
+
+## 🌐 Multilingual lyrics (this fork)
+
+This fork extends the lyrics view so a single song can show **several translations at once** and lets
+you control how they appear. Everything below is additive — files with zero or one translation look
+exactly like they do upstream.
+
+- **🈁 Multiple stacked translations** — when a lyric file contains more than one translation, all of
+  them are shown stacked under the original line (previously only the first was kept). Works with
+  **ELRC** (extra lines sharing the same timestamp) and **TTML** (multiple
+  `<span ttm:role="x-translation">` per line). The word-by-word highlight stays on the original.
+- **🗣️ In-app language selector** — a globe button in the lyrics screen opens a menu listing the
+  languages found in the current file, plus **Off** and **All languages**. The choice is remembered
+  and applies everywhere (full screen and the now-playing cover).
+- **🎨 Per-language colors** — in **Settings → Lyrics → Translation colors**, give each detected
+  language a fixed color (preset swatches or a `#RRGGBB` hex value) so stacked translations are easy
+  to tell apart at a glance.
+- **🏷️ LRC language tags** — LRC/ELRC translation lines can declare their language with a bracket
+  block right after the timestamp, e.g. `[00:12.00][fr]…` or `[00:12.00][pt-BR]…`. Untagged lines
+  keep working as before.
+
+### 📸 Screenshots
+
+<div align="center">
+<table>
+<tr>
+<td align="center" width="33%"><img src="assets/intl/stacked_translations.png" alt="Multiple stacked translations" width="220"/><br/>Stacked translations</td>
+<td align="center" width="33%"><img src="assets/intl/language_picker.png" alt="Language selector" width="220"/><br/>Language selector</td>
+<td align="center" width="33%"><img src="assets/intl/per_language_colors.png" alt="Per-language colors" width="220"/><br/>Per-language colors</td>
+</tr>
+</table>
+</div>
+
+> _Screenshots are placeholders until captured from a device/emulator — see
+> [`assets/intl/`](assets/intl/)._
+
+### 🧪 Try it without your own files
+
+Sample sidecar files live in [`samples/multilingual-lyrics/`](samples/multilingual-lyrics/). To test
+on any track:
+
+1. Pick a song already on your device/emulator (any audio file).
+2. Copy a sample next to it, renamed to the **same base name** so Booming picks it up as a sidecar:
+   - `YourSong.lrc` ← e.g. [`elrc_multi_translation.lrc`](samples/multilingual-lyrics/elrc_multi_translation.lrc)
+     or the Bones example `Bones - Imagine Dragons.lrc`
+   - `YourSong.ttml` ← e.g. `Bones - Imagine Dragons.ttml`
+3. Open the song, show the lyrics and play. You should see the original on top with each translation
+   stacked below; use the globe to switch languages and **Settings → Lyrics → Translation colors** to
+   color them.
+
+> Test only one sidecar (`.lrc` **or** `.ttml`) per song — TTML is preferred when both are present.
+> The Imagine Dragons "Bones" sample ships only the `.lrc`/`.ttml` lyric files (no audio); bring your
+> own copy of the track to play along. See
+> [`samples/multilingual-lyrics/README.md`](samples/multilingual-lyrics/README.md) for details.
+
+### 🛠️ Build it yourself
+
+```sh
+# Debug APK (installable, no signing key required)
+./gradlew :app:assembleNormalDebug
+# Output: app/build/outputs/apk/normal/debug/
+
+# Run the off-device lyrics-parser unit tests
+./gradlew :app:testNormalDebugUnitTest --tests "com.mardous.booming.data.local.lyrics.*"
+```
 
 ## 📸 Screenshots
 
@@ -169,6 +243,11 @@ Your support is greatly appreciated and keeps me motivated to continue improving
 </div>
 
 ## 🙌 Credits
+
+**Booming Music** is created and maintained by
+[Christians Martínez Alvarado (mardous)](https://github.com/mardous) —
+[upstream repository](https://github.com/mardous/BoomingMusic). This *International edition* is a
+community fork that only adds the multilingual-lyrics features above.
 
 Inspired by [Retro Music Player](https://github.com/RetroMusicPlayer/RetroMusicPlayer).
 Also thanks to:
