@@ -84,10 +84,8 @@ local.properties
 /*.m4a
 /*.ogg
 /*.wav
-# Real-lyrics test sidecars (copyrighted content, kept out of the repo)
+# Personal working copy of the real-lyrics file at the repo root
 /Imagine Dragons - Bones.lrc
-/samples/multilingual-lyrics/Bones - Imagine Dragons.lrc
-/samples/multilingual-lyrics/Bones - Imagine Dragons.ttml
 # Scratch test scripts/output for the standalone JVM lyrics harness
 /tools/jvm-lyrics-test/.gradle/
 /tools/jvm-lyrics-test/build/
