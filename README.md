@@ -14,53 +14,7 @@
 > Upstream issues: [#474](https://github.com/mardous/BoomingMusic/issues/474),
 > [#475](https://github.com/mardous/BoomingMusic/issues/475).
 
-[![Latest Release](https://img.shields.io/github/v/release/mardous/BoomingMusic?style=for-the-badge&label=Release&logo=github)](https://github.com/mardous/BoomingMusic/releases/latest)
-[![F-Droid version](https://img.shields.io/f-droid/v/com.mardous.booming?style=for-the-badge&label=F-Droid&logo=fdroid)](https://f-droid.org/packages/com.mardous.booming/)
-[![Downloads](https://img.shields.io/github/downloads/mardous/BoomingMusic/total?style=for-the-badge&logo=github&label=Downloads)](https://github.com/mardous/BoomingMusic/releases)
-[![License: GPL v3](https://img.shields.io/github/license/mardous/BoomingMusic?style=for-the-badge&color=orange&label=License&logo=gnu)](LICENSE.txt)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor_Covenant-2.1-4baaaa.svg?style=for-the-badge&logo=contributorcovenant)](CODE_OF_CONDUCT.md)
-[![Telegram Channel](https://img.shields.io/badge/Telegram-Join_Chat-blue?style=for-the-badge&logo=telegram)](https://t.me/mardousdev)
-
-<a href="https://github.com/mardous/BoomingMusic/releases"><img src="assets/badge-github.png" height="60" alt="GitHub Release"></a>
-<a href="https://f-droid.org/packages/com.mardous.booming/"><img src="assets/badge-fdroid.png" height="60" alt="F-Droid"></a>
-<a href="https://apt.izzysoft.de/packages/com.mardous.booming/"><img src="assets/badge-izzyondroid.png" height="60" alt="IzzyOnDroid"></a>
-<a href="https://www.openapk.net/boomingmusic/com.mardous.booming/"><img src="assets/badge-openapk.png" height="60" alt="OpenAPK"></a>
-<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/mardous/BoomingMusic/"><img src="assets/badge-obtainium.png" height="60" alt="Obtainium"></a>
-
 </div>
-
-## 🗂️ Table of Contents
-
-- [🌐 Multilingual lyrics (this fork)](#-multilingual-lyrics-this-fork)
-- [✨ Key Features](#-key-features)
-- [📸 Screenshots](#-screenshots)
-- [💻 Tech Stack](#-tech-stack)
-- [🧩 Roadmap](#-roadmap)
-- [🔗 Useful Links](#-useful-links)
-- [🤝 Contributing](#-contributing)
-- [🙌 Credits](#-credits)
-- [⚖️ License](#-license)
-
-## ✨ Key Features
-
-- 🎼 **Automatic Lyrics Download & Editing** – Automatically fetch, sync, and edit lyrics with ease.
-- 💬 **Word-by-Word Synced Lyrics** – Enjoy immersive real-time lyric playback with word-level timing.
-- 🌍 **Translated Lyrics Support** – Display dual-language lyrics via TTML or LRC with translations.
-- 🔊 **Built-in Equalizer** – Powerful EQ with up to 15 fully configurable bands and customizable profiles.
-- 🎧 **AutoEq Support** – Import professionally tuned headphone correction profiles for the most accurate sound possible.
-- 🔄 **Gapless Playback** – Smooth transitions between songs with zero interruption.
-- 🧠 **Smart Playlists** – Auto-generated lists like *Recently Played*, *Most Played*, and *History*.
-- 📈 **Native Scrobbling** – Seamlessly sync your listening history with **Last.fm** and **ListenBrainz**.
-- 🎧 **Bluetooth & Headset Controls** – Manage playback easily via connected devices.
-- 🚗 **Android Auto Integration** – Full hands-free experience on the road.
-- 🎨 **Material You Design** – Dynamic theming for a modern and personal interface.
-- 📂 **Folder Browsing** – Play songs directly from any folder.
-- ⏰ **Sleep Timer** – Automatically stop playback after a set time.
-- 🧩 **Widgets** – Lock screen and home screen controls for quick access.
-- 🔖 **Tag Editor** – Edit song metadata such as title, artist, and album info.
-- 🔉 **ReplayGain Support** – Maintain consistent volume across all tracks.
-- 🖼️ **Automatic Artist Images** – Download artist artwork for a polished library look.
-- 🚫 **Library Filtering** – Easily exclude or include folders with blacklist/whitelist options.
 
 ## 🌐 Multilingual lyrics (this fork)
 
@@ -127,135 +81,13 @@ on any track:
 ./gradlew :app:testNormalDebugUnitTest --tests "com.mardous.booming.data.local.lyrics.*"
 ```
 
-## 📸 Screenshots
 
-<div align="center">
-<table>
-<tr>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/1.jpg" alt="For You" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/2.jpg" alt="Songs" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/3.jpg" alt="Albums" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/4.jpg" alt="Album View" width="180"/></td>
-</tr>
-<tr>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/5.jpg" alt="Search" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/6.jpg" alt="Normal" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/7.jpg" alt="Full" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/8.jpg" alt="Gradient" width="180"/></td>
-</tr>
-<tr>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/9.jpg" alt="Plain" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/10.jpg" alt="M3" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/11.jpg" alt="Expressive" width="180"/></td>
-<td align="center" width="25%"><img src="metadata/en-US/images/phoneScreenshots/12.jpg" alt="Peek" width="180"/></td>
-</tr>
-</table>
-</div>
-
-### 💻 Tech Stack
-
-| Layer                   | Technology                                                     |
-|:------------------------|:---------------------------------------------------------------|
-| 🎧 Audio Engine         | [Media3 ExoPlayer](https://developer.android.com/media/media3) |
-| 🧱 Architecture         | MVVM + Repository Pattern                                      |
-| 💾 Persistence          | Room Database                                                  |
-| ⚙️ Dependency Injection | [Koin](https://insert-koin.io/)                                |
-| 🧵 Async                | Kotlin Coroutines & Flow                                       |
-| 🧩 UI                   | Android Views + Jetpack Compose (hybrid)                       |
-| 🖼️ Image Loading        | [Coil](https://coil-kt.github.io/coil/)                        |
-| 🎨 Design               | Material 3 / Material You                                      |
-| 🗣️ Language            | Kotlin                                                         |
-
-## 🧩 Roadmap
-
-- [ ] 📦 Independent library scanner (no MediaStore dependency)
-- [ ] 🎨 Multi-artist support (split & index properly)
-- [ ] 🎵 Improved genre handling
-- [ ] 🔁 Last.fm integration (import/export playback data)
-- [ ] 💿 Enhanced artist pages (separate albums and singles visually)
-- [ ] 🌐 Jellyfin & Navidrome integration
-
-## 🔗 Useful Links
-
-- 🔐 **[Requested Permissions](https://github.com/mardous/BoomingMusic/wiki/Advanced-Info#-permissions)**  
-  What the app needs and why
-
-- 🚘 **[Android Auto Setup](https://github.com/mardous/BoomingMusic/wiki/Advanced-Info#-android-auto-setup)**  
-  How to enable and troubleshoot
-
-- 🎧 **[Supported Formats](https://github.com/mardous/BoomingMusic/wiki/Advanced-Info#-supported-formats)**  
-  Compatible audio formats
-
-- 💬 **[Community](https://github.com/mardous/BoomingMusic/wiki/Community)**  
-  Users and contributors
-
-- 🌐 **[Translations](https://hosted.weblate.org/projects/booming-music/)**  
-  Help us translate Booming Music into your language
-
-- ❓ **[FAQ](https://github.com/mardous/BoomingMusic/wiki/FAQ)**  
-  Common questions
-
-## 🤝 Contributing
-
-Booming Music is open-source — contributions are **always welcome!**
-Check the [Contributing Guide](CONTRIBUTING.md) for details.
-
-If you enjoy the app or want to support its development, give the repo a ⭐ — it really helps!
-You can also:
-- Open issues
-- Submit pull requests
-- Suggest new ideas
-
-**Translations:** Managed on [Hosted Weblate](https://hosted.weblate.org/projects/booming-music/).
-
-[![Translation Status](https://hosted.weblate.org/widget/booming-music/horizontal-auto.svg)](https://hosted.weblate.org/projects/booming-music/)
-
-## 💖 Support Development
-
-Booming Music is an open-source project developed and maintained with passion in my spare time.
-If you enjoy the app and the free features it offers, please consider supporting me to help cover
-development costs and dedicate more time to new features.
-
-Your support is greatly appreciated and keeps me motivated to continue improving Booming Music!
 
 <div align="center">
 
 <a href="https://ko-fi.com/christiaam" target="_blank">
 <img src="https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_red.png" alt="Support me on Ko-fi" style="border: 0px; height: 40px;" />
 </a>
-
-### ❤️ Supporters
-
-**mbeezy** (first donor)
-<br/>
-**[KKTweex](https://github.com/Qoojoe)**
-<br/>
-**[FabiRich](https://github.com/FabiRich)**
-<br/>
-**[Bloodaxe](https://github.com/Bloodaxe95)**
-<br/>
-**Bernhard**
-<br/>
-**Andreas Hirth**
-<br/>
-**Revolver327**
-
-</div>
-
-## 🙌 Credits
-
-**Booming Music** is created and maintained by
-[Christians Martínez Alvarado (mardous)](https://github.com/mardous) —
-[upstream repository](https://github.com/mardous/BoomingMusic). This *International edition* is a
-community fork that only adds the multilingual-lyrics features above.
-
-Inspired by [Retro Music Player](https://github.com/RetroMusicPlayer/RetroMusicPlayer).
-Also thanks to:
-
-- [AMLV](https://github.com/dokar3/amlv)
-- [LRCLib](https://lrclib.net/)
-- [Better Lyrics](https://better-lyrics.boidu.dev/)
-- [Lyrically API](https://lyrics.paxsenix.org/) (by [Alex](https://github.com/Paxsenix0))
 
 ## ⚖️ License
 
