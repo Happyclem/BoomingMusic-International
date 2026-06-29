@@ -77,3 +77,17 @@ Gemfile.lock
 
 local.properties
 /.kotlin/
+
+# Local personal test media at the repo root (not for distribution)
+/*.mp3
+/*.flac
+/*.m4a
+/*.ogg
+/*.wav
+# Real-lyrics test sidecars (copyrighted content, kept out of the repo)
+/Imagine Dragons - Bones.lrc
+/samples/multilingual-lyrics/Bones - Imagine Dragons.lrc
+/samples/multilingual-lyrics/Bones - Imagine Dragons.ttml
+# Scratch test scripts/output for the standalone JVM lyrics harness
+/tools/jvm-lyrics-test/.gradle/
+/tools/jvm-lyrics-test/build/

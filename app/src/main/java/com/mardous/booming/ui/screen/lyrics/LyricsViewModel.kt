@@ -22,6 +22,7 @@ import com.mardous.booming.core.model.lyrics.LyricsViewSettings.Key
 import com.mardous.booming.core.model.lyrics.TranslationFilter
 import com.mardous.booming.core.model.lyrics.TranslationFilter.Companion.toValue
 import com.mardous.booming.data.local.lyrics.InstrumentalDetector
+import com.mardous.booming.data.local.lyrics.TranslationColorStore
 import com.mardous.booming.data.local.repository.LyricsRepository
 import com.mardous.booming.data.model.Song
 import com.mardous.booming.data.model.lyrics.LyricsSource
@@ -50,7 +51,8 @@ import com.mardous.booming.core.model.lyrics.LyricsViewSettings.Mode as LyricsVi
 class LyricsViewModel(
     application: Application,
     private val preferences: SharedPreferences,
-    private val repository: LyricsRepository
+    private val repository: LyricsRepository,
+    private val translationColorStore: TranslationColorStore
 ) : AndroidViewModel(application), OnSharedPreferenceChangeListener {
 
     private var instrumentalDetector: InstrumentalDetector
@@ -78,6 +80,12 @@ class LyricsViewModel(
 
     private val _fullLyricsViewSettings = MutableStateFlow(createViewSettings(LyricsViewMode.Full))
     val fullLyricsViewSettings = _fullLyricsViewSettings.asStateFlow()
+
+    /** User-defined per-language translation colors + the languages detected across files. */
+    val translationColors = translationColorStore.state
+
+    fun setTranslationColor(lang: String, color: Int?) =
+        translationColorStore.setColor(lang, color)
 
     private var lyricsJob: Job? = null
 
@@ -242,6 +250,12 @@ class LyricsViewModel(
                         LyricsSource.Downloaded
                     )
                 )
+                if (lyricsState is LyricsUiState.Synced) {
+                    // Remember the languages seen so the color settings can list them later.
+                    translationColorStore.onLanguagesDetected(
+                        lyricsState.syncedLyrics.availableTranslationLanguages
+                    )
+                }
                 if (isActive) {
                     _lyricsUiState.value = lyricsState
                 }

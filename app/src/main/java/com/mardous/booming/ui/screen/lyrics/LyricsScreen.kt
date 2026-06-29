@@ -159,6 +159,7 @@ fun LyricsScreen(
 
     val lyricsViewSettings by lyricsViewModel.fullLyricsViewSettings.collectAsState()
     val uiState by lyricsViewModel.lyricsUiState.collectAsState()
+    val translationColors by lyricsViewModel.translationColors.collectAsState()
 
     val translationLanguages = remember(uiState) {
         (uiState as? LyricsUiState.Synced)?.syncedLyrics?.availableTranslationLanguages.orEmpty()
@@ -273,6 +274,7 @@ fun LyricsScreen(
                 isPlaying = isPlaying,
                 isPowerSaveMode = isPowerSaveMode,
                 hasBackgroundEffects = hasBackgroundEffects,
+                translationColors = translationColors.colors,
                 onSeekToLine = {
                     playerViewModel.seekTo(it.start)
                     if (lyricsViewSettings.resumeOnSeek) {
@@ -312,6 +314,7 @@ fun CoverLyricsScreen(
 
     val lyricsViewSettings by lyricsViewModel.playerLyricsViewSettings.collectAsState()
     val uiState by lyricsViewModel.lyricsUiState.collectAsState()
+    val translationColors by lyricsViewModel.translationColors.collectAsState()
 
     val playerColorScheme by playerViewModel.colorSchemeFlow.collectAsState(
         initial = PlayerColorScheme.themeColorScheme(context)
@@ -329,6 +332,7 @@ fun CoverLyricsScreen(
                 isPlaying = isPlaying,
                 isPowerSaveMode = isPowerSaveMode,
                 hasBackgroundEffects = false,
+                translationColors = translationColors.colors,
                 onSeekToLine = {
                     playerViewModel.seekTo(it.start)
                     if (lyricsViewSettings.resumeOnSeek) {
@@ -370,6 +374,7 @@ private fun LyricsSurface(
     isPlaying: Boolean,
     isPowerSaveMode: Boolean,
     hasBackgroundEffects: Boolean,
+    translationColors: Map<String, Int>,
     onSeekToLine: (SyncedLyrics.Line) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -454,6 +459,7 @@ private fun LyricsSurface(
                     contentColor = contentColor,
                     isPowerSaveMode = isPowerSaveMode,
                     hasBackgroundEffects = hasBackgroundEffects,
+                    translationColors = translationColors,
                     onLineClick = { onSeekToLine(it) }
                 )
             }
