@@ -306,7 +306,7 @@ private fun LyricsLineView(
                         index = index,
                         selectedIndex = selectedIndex,
                         content = line.content,
-                        translatedContent = if (showTranslation) line.translation else null,
+                        translations = if (showTranslation) line.translations else emptyList(),
                         transliterationContent = if (showTransliteration) line.transliteration else null,
                         backgroundContent = false,
                         enableSyllable = enableSyllable,
@@ -324,14 +324,14 @@ private fun LyricsLineView(
                     )
 
                     if (line.content.hasBackgroundSyllables) {
-                        if (line.translation?.isEmpty == false) {
+                        if (line.translations.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(lineSpacing))
                         }
                         LyricsLineContentView(
                             index = index,
                             selectedIndex = selectedIndex,
                             content = line.content,
-                            translatedContent = if (showTranslation) line.translation else null,
+                            translations = if (showTranslation) line.translations else emptyList(),
                             transliterationContent = if (showTransliteration) line.transliteration else null,
                             backgroundContent = true,
                             enableSyllable = enableSyllable,
@@ -362,7 +362,7 @@ fun LyricsLineContentView(
     index: Int,
     selectedIndex: Int,
     content: SyncedLyrics.TextContent,
-    translatedContent: SyncedLyrics.TextContent?,
+    translations: List<SyncedLyrics.Translation>,
     transliterationContent: SyncedLyrics.TextContent?,
     enableSyllable: Boolean,
     backgroundContent: Boolean,
@@ -448,9 +448,14 @@ fun LyricsLineContentView(
         )
     }
 
-    if (translatedContent != null && !translatedContent.isEmpty) {
-        val fontSizeDivider =
-            if (transliterationContent != null && !transliterationContent.isEmpty) 1.60f else 1.40f
+    // Stack every translation layer below the original (and transliteration, if any). The
+    // word-by-word highlight stays on the original content only; translations render as plain text.
+    val fontSizeDivider =
+        if (transliterationContent != null && !transliterationContent.isEmpty) 1.60f else 1.40f
+
+    for (translation in translations) {
+        val translatedContent = translation.content
+        if (translatedContent.isEmpty) continue
 
         LineTextView(
             plainText = translatedContent.getText(backgroundContent),

@@ -24,7 +24,7 @@ data class SyncedLyrics(
         val duration: Long = (end - start),
         val content: TextContent,
         val transliteration: TextContent?,
-        val translation: TextContent?,
+        val translations: List<Translation> = emptyList(),
         val actor: LyricsActor?
     ) {
         val id: Long = 31 * (31 * start + duration) + content.hashCode()
@@ -34,7 +34,27 @@ data class SyncedLyrics(
         val isWordSynced = content.isWordSynced
 
         val hasBackgroundVocals = content.hasBackgroundSyllables
+
+        /**
+         * The first translation layer, kept for backward compatibility with callers that
+         * only deal with a single translation. New code should prefer [translations].
+         */
+        val translation: TextContent?
+            get() = translations.firstOrNull()?.content
     }
+
+    /**
+     * A single translation layer attached to a [Line].
+     *
+     * @param content the translated text content.
+     * @param lang the BCP-47 language code of this translation, or `null` when unknown
+     * (e.g. plain LRC translations that don't declare a language).
+     */
+    @Immutable
+    data class Translation(
+        val content: TextContent,
+        val lang: String?
+    )
 
     @Immutable
     data class Word(
