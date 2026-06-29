@@ -29,6 +29,7 @@ import com.mardous.booming.data.local.MediaStoreWriter
 import com.mardous.booming.data.local.repository.AlbumRepository
 import com.mardous.booming.data.local.repository.ArtistRepository
 import com.mardous.booming.data.local.repository.GenreRepository
+import com.mardous.booming.data.local.lyrics.TranslationColorStore
 import com.mardous.booming.data.local.repository.LyricsRepository
 import com.mardous.booming.data.local.repository.NetworkRepository
 import com.mardous.booming.data.local.repository.NetworkRepositoryImpl
@@ -261,6 +262,10 @@ private val dataModule = module {
     } bind LyricsRepository::class
 
     single {
+        TranslationColorStore(preferences = get())
+    }
+
+    single {
         NetworkRepositoryImpl(
             context = androidContext(),
             preferences = get(),
@@ -342,7 +347,12 @@ private val viewModule = module {
     }
 
     viewModel {
-        LyricsViewModel(application = androidApplication(), preferences = get(), repository = get())
+        LyricsViewModel(
+            application = androidApplication(),
+            preferences = get(),
+            repository = get(),
+            translationColorStore = get()
+        )
     }
 
     viewModel {

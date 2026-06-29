@@ -17,8 +17,11 @@
 
 package com.mardous.booming.ui.screen.settings
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -35,6 +38,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import coil3.SingletonImageLoader
 import com.google.android.material.color.DynamicColors
@@ -42,8 +46,10 @@ import com.mardous.booming.BuildConfig
 import com.mardous.booming.R
 import com.mardous.booming.coil.CoverProvider
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings
+import com.mardous.booming.core.model.lyrics.TranslationFilter
 import com.mardous.booming.data.local.room.InclExclDao
 import com.mardous.booming.data.model.network.ScrobblingService
+import com.mardous.booming.extensions.dp
 import com.mardous.booming.extensions.files.getFormattedFileName
 import com.mardous.booming.extensions.hasR
 import com.mardous.booming.extensions.hasS
@@ -51,6 +57,7 @@ import com.mardous.booming.extensions.isTablet
 import com.mardous.booming.extensions.materialSharedAxis
 import com.mardous.booming.extensions.navigation.findActivityNavController
 import com.mardous.booming.extensions.requestContext
+import com.mardous.booming.extensions.resolveColor
 import com.mardous.booming.extensions.showToast
 import com.mardous.booming.extensions.utilities.dateStr
 import com.mardous.booming.extensions.utilities.toEnum
@@ -64,6 +71,7 @@ import com.mardous.booming.ui.component.preferences.dialog.ExtraInfoPreferenceDi
 import com.mardous.booming.ui.component.preferences.dialog.NowPlayingScreenPreferenceDialog
 import com.mardous.booming.ui.component.preferences.dialog.SingleSelectionDialog
 import com.mardous.booming.ui.component.preferences.dialog.SongClickActionPreferenceDialog
+import com.mardous.booming.ui.component.preferences.dialog.TranslationColorDialog
 import com.mardous.booming.ui.dialogs.MultiCheckDialog
 import com.mardous.booming.ui.dialogs.library.BlacklistWhitelistDialog
 import com.mardous.booming.ui.screen.library.LibraryViewModel
@@ -125,8 +133,82 @@ class NowPlayingPreferencesFragment : PreferenceScreenFragment() {
 }
 
 class LyricsPreferencesFragment : PreferenceScreenFragment() {
+
+    private val lyricsViewModel: LyricsViewModel by activityViewModel()
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_screen_lyrics)
+        rebuildTranslationColorPreferences()
+    }
+
+    /**
+     * Adds a "Translation colors" category with one entry per language detected across the user's
+     * lyric files. Each entry opens a color picker that sets a fixed color for that language.
+     */
+    private fun rebuildTranslationColorPreferences() {
+        val context = preferenceManager.context
+        val screen = preferenceScreen
+        val state = lyricsViewModel.translationColors.value
+
+        val existing = screen.findPreference<PreferenceCategory>(KEY_TRANSLATION_COLORS)
+        existing?.let { screen.removePreference(it) }
+
+        val category = PreferenceCategory(context).apply {
+            key = KEY_TRANSLATION_COLORS
+            title = getString(R.string.lyrics_translation_colors_title)
+            isIconSpaceReserved = false
+        }
+        screen.addPreference(category)
+
+        if (state.detectedLanguages.isEmpty()) {
+            category.addPreference(Preference(context).apply {
+                summary = getString(R.string.lyrics_translation_colors_empty)
+                isSelectable = false
+                isIconSpaceReserved = false
+            })
+            return
+        }
+
+        for (lang in state.detectedLanguages) {
+            val color = state.colorFor(lang)
+            category.addPreference(Preference(context).apply {
+                key = "translation_color_$lang"
+                title = TranslationFilter.displayLanguage(lang)
+                icon = colorSwatch(context, color)
+                isIconSpaceReserved = true
+                setOnPreferenceClickListener {
+                    showColorDialog(lang, color)
+                    true
+                }
+            })
+        }
+    }
+
+    private fun showColorDialog(lang: String, current: Int?) {
+        TranslationColorDialog.newInstance(lang, current).apply {
+            onResult = { resultLang, resultColor ->
+                lyricsViewModel.setTranslationColor(resultLang, resultColor)
+                rebuildTranslationColorPreferences()
+            }
+        }.show(childFragmentManager, "TRANSLATION_COLOR")
+    }
+
+    private fun colorSwatch(context: Context, color: Int?): Drawable {
+        val size = 24.dp(resources)
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setSize(size, size)
+            if (color != null) {
+                setColor(color)
+            } else {
+                setColor(Color.TRANSPARENT)
+                setStroke(2.dp(resources), context.resolveColor(com.google.android.material.R.attr.colorOutline))
+            }
+        }
+    }
+
+    companion object {
+        private const val KEY_TRANSLATION_COLORS = "lyrics_translation_colors_category"
     }
 }
 

@@ -718,6 +718,11 @@
     <string name="lyrics_show_translation_summary">Display translated lyrics if available.</string>
     <string name="lyrics_translation_off">Off</string>
     <string name="lyrics_translation_all">All languages</string>
+    <string name="lyrics_translation_colors_title">Translation colors</string>
+    <string name="lyrics_translation_colors_empty">Languages will appear here once you open lyrics that contain translations.</string>
+    <string name="lyrics_translation_color_for">Color for %1$s</string>
+    <string name="lyrics_translation_color_hex_label">Hex color (#RRGGBB)</string>
+    <string name="lyrics_translation_color_clear">Use default</string>
     <string name="lyrics_show_transliteration_title">Show transliteration</string>
     <string name="lyrics_show_transliteration_summary">Display transliterated lyrics if available.</string>
     <string name="lyrics_bold_synced_title">Bold font for synced lyrics</string>

@@ -87,6 +87,7 @@ fun LyricsView(
     contentColor: Color,
     isPowerSaveMode: Boolean,
     hasBackgroundEffects: Boolean,
+    translationColors: Map<String, Int> = emptyMap(),
     modifier: Modifier = Modifier,
     onLineClick: (SyncedLyrics.Line) -> Unit
 ) {
@@ -172,6 +173,7 @@ fun LyricsView(
                 } else {
                     emptyList()
                 },
+                translationColors = translationColors,
                 showTransliteration = settings.showTransliteration,
                 enableBlurEffect = settings.blurEffect && disableBlurEffect.not(),
                 enableShadowEffect = settings.shadowEffect && disableAdvancedEffects.not(),
@@ -216,6 +218,7 @@ private fun LyricsLineView(
     enableKaraokeStyle: Boolean,
     progressiveColoring: Boolean,
     translations: List<SyncedLyrics.Translation>,
+    translationColors: Map<String, Int>,
     showTransliteration: Boolean,
     enableBlurEffect: Boolean,
     enableShadowEffect: Boolean,
@@ -311,6 +314,7 @@ private fun LyricsLineView(
                         selectedIndex = selectedIndex,
                         content = line.content,
                         translations = translations,
+                        translationColors = translationColors,
                         transliterationContent = if (showTransliteration) line.transliteration else null,
                         backgroundContent = false,
                         enableSyllable = enableSyllable,
@@ -336,6 +340,7 @@ private fun LyricsLineView(
                             selectedIndex = selectedIndex,
                             content = line.content,
                             translations = translations,
+                            translationColors = translationColors,
                             transliterationContent = if (showTransliteration) line.transliteration else null,
                             backgroundContent = true,
                             enableSyllable = enableSyllable,
@@ -367,6 +372,7 @@ fun LyricsLineContentView(
     selectedIndex: Int,
     content: SyncedLyrics.TextContent,
     translations: List<SyncedLyrics.Translation>,
+    translationColors: Map<String, Int>,
     transliterationContent: SyncedLyrics.TextContent?,
     enableSyllable: Boolean,
     backgroundContent: Boolean,
@@ -461,6 +467,12 @@ fun LyricsLineContentView(
         val translatedContent = translation.content
         if (translatedContent.isEmpty) continue
 
+        // Use the user-defined color for this language if set, otherwise the default content color.
+        val translationColor = translation.lang
+            ?.let { translationColors[it.lowercase()] }
+            ?.let { Color(it) }
+            ?: contentColor
+
         LineTextView(
             plainText = translatedContent.getText(backgroundContent),
             syllables = translatedContent.getSyllables(backgroundContent),
@@ -469,7 +481,7 @@ fun LyricsLineContentView(
             enableShadowEffect = enableShadowEffect,
             progressiveColoring = progressiveColoring && mainSyllables.isEmpty(),
             selectedLine = selectedLine,
-            contentColor = contentColor,
+            contentColor = translationColor,
             effectDuration = effectDuration,
             progressFraction = progressFraction,
             progressMillis = progressMillis,
