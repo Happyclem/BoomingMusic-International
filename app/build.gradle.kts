@@ -192,6 +192,13 @@ android {
         abortOnError = true
         warning += listOf("ImpliedQuantity", "Instantiatable", "MissingQuantity", "MissingTranslation")
     }
+    testOptions {
+        unitTests {
+            // Lyrics parsers call android.util.Log; return defaults instead of throwing so they
+            // can be exercised from local JVM unit tests.
+            isReturnDefaultValues = true
+        }
+    }
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
@@ -320,6 +327,11 @@ dependencies {
     implementation(libs.versioncompare)
     implementation(libs.commons.text)
     implementation(libs.juniversalchardet)
+
+    testImplementation(libs.junit)
+    // Provides an XmlPullParser implementation on the JVM so the TTML parser can run in
+    // local unit tests (the stub android.jar only ships the XmlPull interfaces).
+    testImplementation(libs.kxml2)
 }
 
 fun getProperties(fileName: String): Properties? {
