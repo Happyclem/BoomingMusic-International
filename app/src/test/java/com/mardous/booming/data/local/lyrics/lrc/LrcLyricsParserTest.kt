@@ -95,6 +95,41 @@ class LrcLyricsParserTest {
     }
 
     @Test
+    fun `language tag after timestamp is extracted and stripped from text`() {
+        val lyrics = parse(
+            """
+            [00:10.00]Example line here
+            [00:10.00][fr]Exemple de ligne traduite
+            [00:10.00][es]Ejemplo de linea traducida
+            """.trimIndent()
+        )
+        checkNotNull(lyrics)
+
+        val line = lyrics.lines.single { it.start == 10_000L }
+        assertEquals(listOf("fr", "es"), line.translations.map { it.lang })
+        // The [xx] tag must not leak into the displayed translation text.
+        assertEquals(
+            listOf("Exemple de ligne traduite", "Ejemplo de linea traducida"),
+            line.translations.map { it.content.content }
+        )
+    }
+
+    @Test
+    fun `region subtag is supported in language tag`() {
+        val lyrics = parse(
+            """
+            [00:10.00]Example line here
+            [00:10.00][pt-BR]Exemplo de linha traduzida
+            """.trimIndent()
+        )
+        checkNotNull(lyrics)
+
+        val line = lyrics.lines.single { it.start == 10_000L }
+        assertEquals("pt-br", line.translations[0].lang)
+        assertEquals("Exemplo de linha traduzida", line.translations[0].content.content)
+    }
+
+    @Test
     fun `word-synced original keeps its syllables while translation stays plain`() {
         val lyrics = parse(
             """
