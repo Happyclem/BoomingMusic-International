@@ -9,7 +9,9 @@ internal class LrcNode(
     val text: String?,
     var bgText: String?,
     var rawLine: String?,
-    var actor: LyricsActor? = null
+    var actor: LyricsActor? = null,
+    /** Optional BCP-47 language code declared via a `[xx]` block on a translation line. */
+    val lang: String? = null
 ) {
     private val children = mutableListOf<LrcNode>()
 

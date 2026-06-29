@@ -19,6 +19,8 @@ import androidx.lifecycle.viewModelScope
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings.BackgroundEffect
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings.Key
+import com.mardous.booming.core.model.lyrics.TranslationFilter
+import com.mardous.booming.core.model.lyrics.TranslationFilter.Companion.toValue
 import com.mardous.booming.data.local.lyrics.InstrumentalDetector
 import com.mardous.booming.data.local.repository.LyricsRepository
 import com.mardous.booming.data.model.Song
@@ -111,6 +113,16 @@ class LyricsViewModel(
 
     fun disposeEditorContent() = viewModelScope.launch(IO) {
         _lyricsEditorUiState.value = LyricsEditorUiState.Disposed
+    }
+
+    /**
+     * Persists the active translation language selection. The change is picked up by the
+     * preference listener, which rebuilds both player and full view settings.
+     */
+    fun setTranslationFilter(filter: TranslationFilter) {
+        preferences.edit {
+            putString(Key.TRANSLATION_LANGUAGE, filter.toValue())
+        }
     }
 
     fun saveLyrics(song: Song, newLyrics: Map<LyricsSource, String>) = viewModelScope.launch(IO) {
@@ -322,6 +334,9 @@ class LyricsViewModel(
         val enableKaraokeStyle = preferences.getBoolean(Key.ENABLE_KARAOKE_STYLE, false)
         val progressiveColoring = preferences.getBoolean(Key.PROGRESSIVE_COLORING, false)
         val showTranslation = preferences.getBoolean(Key.SHOW_TRANSLATION, true)
+        val translationFilter = TranslationFilter.fromValue(
+            preferences.getString(Key.TRANSLATION_LANGUAGE, null)
+        )
         val showTransliteration = preferences.getBoolean(Key.SHOW_TRANSLITERATION, false)
         val resumeOnSeek = preferences.getBoolean(Key.RESUME_ON_SEEK, false)
         val blurEffect = !background.isNone && preferences.getBoolean(Key.BLUR_EFFECT, false)
@@ -376,6 +391,7 @@ class LyricsViewModel(
             blurEffect = blurEffect,
             shadowEffect = shadowEffect,
             showTranslation = showTranslation,
+            translationFilter = translationFilter,
             showTransliteration = showTransliteration,
             resumeOnSeek = resumeOnSeek,
             syncedStyle = syncedStyle,
@@ -401,6 +417,7 @@ class LyricsViewModel(
             Key.LINE_SPACING,
             Key.PROGRESSIVE_COLORING,
             Key.SHOW_TRANSLATION,
+            Key.TRANSLATION_LANGUAGE,
             Key.SHOW_TRANSLITERATION,
             Key.RESUME_ON_SEEK,
             Key.BACKGROUND_EFFECT,

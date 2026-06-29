@@ -10,6 +10,29 @@ data class SyncedLyrics(
 ) {
     val hasContent = lines.isNotEmpty()
 
+    /**
+     * Distinct language codes found across all translation layers, in first-seen order.
+     * Translations without a declared language (e.g. plain LRC) are not listed here; use
+     * [hasUntaggedTranslations] to know whether such layers exist.
+     */
+    val availableTranslationLanguages: List<String> by lazy {
+        lines.asSequence()
+            .flatMap { it.translations.asSequence() }
+            .mapNotNull { it.lang }
+            .distinct()
+            .toList()
+    }
+
+    /** Whether any translation layer has no declared language (e.g. untagged LRC lines). */
+    val hasUntaggedTranslations: Boolean by lazy {
+        lines.any { line -> line.translations.any { it.lang == null } }
+    }
+
+    /** Whether any line carries at least one translation layer. */
+    val hasTranslations: Boolean by lazy {
+        lines.any { it.translations.isNotEmpty() }
+    }
+
     init {
         for (line in lines) {
             require(line.start >= 0) { "startAt in the LyricsLine must >= 0" }

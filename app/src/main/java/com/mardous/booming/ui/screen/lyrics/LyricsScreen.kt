@@ -14,16 +14,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +40,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import java.util.Locale
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -60,6 +67,7 @@ import com.mardous.booming.core.model.LibraryMargin
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings.BackgroundEffect
 import com.mardous.booming.core.model.lyrics.LyricsViewState
+import com.mardous.booming.core.model.lyrics.TranslationFilter
 import com.mardous.booming.core.model.player.PlayerColorScheme
 import com.mardous.booming.data.model.lyrics.SyncedLyrics
 import com.mardous.booming.extensions.isPowerSaveMode
@@ -90,6 +98,53 @@ private fun rememberLyricsViewState(lyrics: SyncedLyrics): LyricsViewState {
     return remember(lyrics) { LyricsViewState(lyrics) }
 }
 
+/**
+ * Globe button that opens a menu to pick which translation language is shown: Off, All, or one of
+ * the languages found in the current lyrics. Renders nothing when there are no translations.
+ */
+@Composable
+private fun TranslationLanguagePicker(
+    languages: List<String>,
+    selected: TranslationFilter,
+    onSelect: (TranslationFilter) -> Unit,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    if (languages.isEmpty()) return
+
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = modifier) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                painter = painterResource(R.drawable.ic_translate_24dp),
+                contentDescription = stringResource(R.string.lyrics_show_translation_title),
+                tint = tint
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            val options = buildList {
+                add(TranslationFilter.Off to stringResource(R.string.lyrics_translation_off))
+                add(TranslationFilter.All to stringResource(R.string.lyrics_translation_all))
+                languages.forEach { lang ->
+                    add(TranslationFilter.Language(lang) to TranslationFilter.displayLanguage(lang))
+                }
+            }
+            options.forEach { (filter, label) ->
+                DropdownMenuItem(
+                    text = { Text(label) },
+                    leadingIcon = {
+                        RadioButton(selected = filter == selected, onClick = null)
+                    },
+                    onClick = {
+                        onSelect(filter)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun LyricsScreen(
     libraryViewModel: LibraryViewModel,
@@ -104,6 +159,10 @@ fun LyricsScreen(
 
     val lyricsViewSettings by lyricsViewModel.fullLyricsViewSettings.collectAsState()
     val uiState by lyricsViewModel.lyricsUiState.collectAsState()
+
+    val translationLanguages = remember(uiState) {
+        (uiState as? LyricsUiState.Synced)?.syncedLyrics?.availableTranslationLanguages.orEmpty()
+    }
 
     val song by playerViewModel.currentSongFlow.collectAsStateWithLifecycle()
     val isPlaying by playerViewModel.isPlayingFlow.collectAsStateWithLifecycle()
@@ -223,6 +282,17 @@ fun LyricsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+            )
+
+            TranslationLanguagePicker(
+                languages = translationLanguages,
+                selected = lyricsViewSettings.translationFilter,
+                onSelect = { lyricsViewModel.setTranslationFilter(it) },
+                tint = if (hasBackgroundEffects) Color.White else MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(8.dp)
             )
         }
     }
