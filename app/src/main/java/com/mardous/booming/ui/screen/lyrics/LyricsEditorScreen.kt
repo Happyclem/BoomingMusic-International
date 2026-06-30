@@ -143,6 +143,10 @@ enum class LyricsEditorResult {
     NoChanges, Failed, Success
 }
 
+enum class LyricsExportResult {
+    Empty, Failed, Success
+}
+
 @Immutable
 sealed class LyricsEditorUiState(open val isLoading: Boolean) {
     data object Disposed : LyricsEditorUiState(false)
@@ -174,6 +178,17 @@ fun LyricsEditorScreen(
     ) { result ->
         if (result.resultCode != Activity.RESULT_OK) {
             onBackClick()
+        }
+    }
+
+    var pendingExportContent by remember { mutableStateOf<String?>(null) }
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/plain")
+    ) { uri ->
+        val content = pendingExportContent
+        pendingExportContent = null
+        if (uri != null && content != null) {
+            viewModel.exportLyrics(uri, content)
         }
     }
 
@@ -235,6 +250,15 @@ fun LyricsEditorScreen(
 
     ObserveAsEvent(viewModel.permissionRequestEvent) { uris ->
         requestWritePermissions(uris)
+    }
+
+    ObserveAsEvent(viewModel.exportEvent) { exportResult ->
+        val toastMessage = when (exportResult) {
+            LyricsExportResult.Empty -> context.getString(R.string.there_are_no_lyrics_to_export)
+            LyricsExportResult.Failed -> context.getString(R.string.could_not_export_lyrics)
+            LyricsExportResult.Success -> context.getString(R.string.lyrics_exported_successfully)
+        }
+        context.showToast(toastMessage)
     }
 
     LaunchedEffect(Unit) {
@@ -360,6 +384,16 @@ fun LyricsEditorScreen(
         }
     }
 
+    fun exportLyrics() {
+        val content = textFieldState.text.toString()
+        if (content.isEmpty()) {
+            context.showToast(R.string.there_are_no_lyrics_to_export)
+            return
+        }
+        pendingExportContent = content
+        exportLauncher.launch(viewModel.suggestExportFileName(song, content))
+    }
+
     fun undoChanges() {
         uiState.let {
             if (it is LyricsEditorUiState.Visible) {
@@ -428,6 +462,12 @@ fun LyricsEditorScreen(
                                     onClick = { showLyricsSearchDialog = true }
                                 ),
                                 MenuItem.Button.DropDown(
+                                    text = stringResource(R.string.export_to_file),
+                                    icon = painterResource(R.drawable.ic_file_export_24dp),
+                                    enabled = !uiState.isLoading,
+                                    onClick = { exportLyrics() }
+                                ),
+                                MenuItem.Button.DropDown(
                                     text = stringResource(android.R.string.paste),
                                     icon = painterResource(R.drawable.ic_content_paste_24dp),
                                     onClick = { pasteFromClipboard() }
@@ -454,10 +494,12 @@ fun LyricsEditorScreen(
                 LyricsEditorBottomBar(
                     enabled = !uiState.isLoading && !isFileSource,
                     downloadEnabled = isLyricsDownloadEnabled,
+                    exportEnabled = !uiState.isLoading,
                     onSearchClick = { showLyricsSearchDialog = true },
                     onDownloadClick = { downloadLyrics() },
                     onSelectAllClick = { selectAllText() },
                     onPasteClick = { pasteFromClipboard() },
+                    onExportClick = { exportLyrics() },
                     onUndoChangesClick = { undoChanges() },
                     onSaveClick = { saveContent() }
                 )
@@ -779,10 +821,12 @@ private fun LyricsEditorHeader(
 private fun LyricsEditorBottomBar(
     enabled: Boolean,
     downloadEnabled: Boolean,
+    exportEnabled: Boolean,
     onSearchClick: () -> Unit,
     onDownloadClick: () -> Unit,
     onPasteClick: () -> Unit,
     onSaveClick: () -> Unit,
+    onExportClick: () -> Unit,
     onUndoChangesClick: () -> Unit,
     onSelectAllClick: () -> Unit
 ) {
@@ -828,17 +872,25 @@ private fun LyricsEditorBottomBar(
             )
         }
         OverflowMenu(
-            enabled = enabled,
+            enabled = enabled || exportEnabled,
             items = listOf(
+                MenuItem.Button.DropDown(
+                    text = stringResource(R.string.export_to_file),
+                    icon = painterResource(R.drawable.ic_file_export_24dp),
+                    enabled = exportEnabled,
+                    onClick = { onExportClick() }
+                ),
                 MenuItem.Button.DropDown(
                     text = stringResource(R.string.select_all_title),
                     icon = painterResource(R.drawable.ic_select_all_24dp),
+                    enabled = enabled,
                     onClick = { onSelectAllClick() }
                 ),
                 MenuItem.Button.DropDown(
                     text = stringResource(R.string.undo_changes),
                     icon = painterResource(R.drawable.ic_restart_alt_24dp),
                     dangerous = true,
+                    enabled = enabled,
                     onClick = { onUndoChangesClick() }
                 )
             )

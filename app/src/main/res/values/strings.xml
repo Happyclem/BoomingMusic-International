@@ -549,6 +549,10 @@
     <string name="could_not_import_font">Could not import font.</string>
     <string name="cannot_edit_lyrics_file">You cannot edit the file content directly from Booming Music.</string>
     <string name="lyrics_by_x">Lyrics by %s</string>
+    <string name="export_to_file">Export to file</string>
+    <string name="lyrics_exported_successfully">Lyrics exported successfully.</string>
+    <string name="could_not_export_lyrics">Couldn\'t export lyrics.</string>
+    <string name="there_are_no_lyrics_to_export">There are no lyrics to export.</string>
 
     <!-- Scrobbling Service -->
     <string name="sign_in_to_x_title">Sign in to %s</string>

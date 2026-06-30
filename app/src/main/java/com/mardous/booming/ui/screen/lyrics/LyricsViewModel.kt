@@ -75,6 +75,9 @@ class LyricsViewModel(
     private val _permissionRequestEvent = Channel<List<Uri>>(Channel.BUFFERED)
     val permissionRequestEvent = _permissionRequestEvent.receiveAsFlow()
 
+    private val _exportEvent = Channel<LyricsExportResult>(Channel.BUFFERED)
+    val exportEvent = _exportEvent.receiveAsFlow()
+
     private val _playerLyricsViewSettings = MutableStateFlow(createViewSettings(LyricsViewMode.Player))
     val playerLyricsViewSettings = _playerLyricsViewSettings.asStateFlow()
 
@@ -186,6 +189,44 @@ class LyricsViewModel(
 
     fun deleteLyrics() = viewModelScope.launch(IO) {
         repository.deleteAllLyrics()
+    }
+
+    /**
+     * Suggests a file name (with extension) for exporting the given lyrics content.
+     * TTML content is detected by inspecting the text; everything else is treated as LRC.
+     */
+    fun suggestExportFileName(song: Song, content: String): String {
+        val baseName = buildString {
+            if (!song.isArtistNameUnknown() && song.artistName.isNotBlank()) {
+                append(song.artistName).append(" - ")
+            }
+            append(song.title.ifBlank { "lyrics" })
+        }.replace(Regex("[\\\\/:*?\"<>|]"), "_")
+        val extension = if (isTtmlContent(content)) "ttml" else "lrc"
+        return "$baseName.$extension"
+    }
+
+    fun exportLyricsMimeType(content: String): String =
+        if (isTtmlContent(content)) "application/ttml+xml" else "text/plain"
+
+    private fun isTtmlContent(content: String): Boolean {
+        val trimmed = content.trimStart()
+        return trimmed.startsWith("<?xml") || trimmed.startsWith("<tt")
+    }
+
+    fun exportLyrics(uri: Uri, content: String) = viewModelScope.launch(IO) {
+        if (content.isEmpty()) {
+            _exportEvent.send(LyricsExportResult.Empty)
+            return@launch
+        }
+        val result = runCatching {
+            getApplication<Application>().contentResolver.openOutputStream(uri, "wt")?.use { output ->
+                output.write(content.toByteArray(Charsets.UTF_8))
+            } ?: error("Could not open output stream for $uri")
+        }
+        _exportEvent.send(
+            if (result.isSuccess) LyricsExportResult.Success else LyricsExportResult.Failed
+        )
     }
 
     fun importCustomFont(context: Context, uri: Uri) = liveData(IO) {
