@@ -78,8 +78,12 @@ class SettingsSearchFragment : Fragment(R.layout.fragment_settings_search) {
     }
 
     private fun openEntry(entry: SettingsSearchEntry) {
+        val navController = findNavController()
+        // Guard against a second tap landing here after we've already navigated away, which would
+        // otherwise crash because the action no longer belongs to the current destination.
+        if (navController.currentDestination?.id != R.id.nav_settings_search) return
         activity?.hideSoftKeyboard()
-        findNavController().navigate(
+        navController.navigate(
             entry.screen.searchNavAction,
             Bundle().apply { putString(ARG_HIGHLIGHT_KEY, entry.key) }
         )

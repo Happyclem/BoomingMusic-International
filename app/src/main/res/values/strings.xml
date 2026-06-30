@@ -718,6 +718,8 @@
     <string name="lyrics_karaoke_style_summary">Enables a Karaoke-style effect for word-by-word synced lyrics. Please note that this is an experimental feature.</string>
     <string name="lyrics_show_translation_title">Show translation</string>
     <string name="lyrics_show_translation_summary">Display translated lyrics if available.</string>
+    <string name="lyrics_show_translation_language_title">Show language badge</string>
+    <string name="lyrics_show_translation_language_summary">Display a small badge with the language code next to each translated line.</string>
     <string name="lyrics_translation_off">Off</string>
     <string name="lyrics_translation_all">All languages</string>
     <string name="lyrics_translation_colors_title">Translation colors</string>

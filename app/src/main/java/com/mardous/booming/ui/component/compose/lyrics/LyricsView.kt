@@ -13,6 +13,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import com.mardous.booming.R
 import com.mardous.booming.core.model.lyrics.LyricsViewSettings
 import com.mardous.booming.core.model.lyrics.LyricsViewState
+import com.mardous.booming.core.model.lyrics.TranslationFilter
 import com.mardous.booming.data.model.lyrics.LyricsActor
 import com.mardous.booming.data.model.lyrics.SyncedLyrics
 import com.mardous.booming.extensions.hasS
@@ -174,6 +177,7 @@ fun LyricsView(
                     emptyList()
                 },
                 translationColors = translationColors,
+                showTranslationLanguage = settings.showTranslationLanguage,
                 showTransliteration = settings.showTransliteration,
                 enableBlurEffect = settings.blurEffect && disableBlurEffect.not(),
                 enableShadowEffect = settings.shadowEffect && disableAdvancedEffects.not(),
@@ -219,6 +223,7 @@ private fun LyricsLineView(
     progressiveColoring: Boolean,
     translations: List<SyncedLyrics.Translation>,
     translationColors: Map<String, Int>,
+    showTranslationLanguage: Boolean,
     showTransliteration: Boolean,
     enableBlurEffect: Boolean,
     enableShadowEffect: Boolean,
@@ -315,6 +320,7 @@ private fun LyricsLineView(
                         content = line.content,
                         translations = translations,
                         translationColors = translationColors,
+                        showTranslationLanguage = showTranslationLanguage,
                         transliterationContent = if (showTransliteration) line.transliteration else null,
                         backgroundContent = false,
                         enableSyllable = enableSyllable,
@@ -341,6 +347,7 @@ private fun LyricsLineView(
                             content = line.content,
                             translations = translations,
                             translationColors = translationColors,
+                            showTranslationLanguage = showTranslationLanguage,
                             transliterationContent = if (showTransliteration) line.transliteration else null,
                             backgroundContent = true,
                             enableSyllable = enableSyllable,
@@ -373,6 +380,7 @@ fun LyricsLineContentView(
     content: SyncedLyrics.TextContent,
     translations: List<SyncedLyrics.Translation>,
     translationColors: Map<String, Int>,
+    showTranslationLanguage: Boolean,
     transliterationContent: SyncedLyrics.TextContent?,
     enableSyllable: Boolean,
     backgroundContent: Boolean,
@@ -473,28 +481,80 @@ fun LyricsLineContentView(
             ?.let { Color(it) }
             ?: contentColor
 
-        LineTextView(
-            plainText = translatedContent.getText(backgroundContent),
-            syllables = translatedContent.getSyllables(backgroundContent),
-            enableSyllable = enableSyllable,
-            enableKaraokeStyle = enableKaraokeStyle,
-            enableShadowEffect = enableShadowEffect,
-            progressiveColoring = progressiveColoring && mainSyllables.isEmpty(),
-            selectedLine = selectedLine,
-            contentColor = translationColor,
-            effectDuration = effectDuration,
-            progressFraction = progressFraction,
-            progressMillis = progressMillis,
-            style = style.copy(
-                fontSize = style.fontSize / fontSizeDivider,
-                fontWeight = FontWeight.Normal
-            ),
-            align = align,
-            modifier = modifier.graphicsLayer {
-                renderEffect = blurEffect
-            }
+        val translationStyle = style.copy(
+            fontSize = style.fontSize / fontSizeDivider,
+            fontWeight = FontWeight.Normal
         )
+
+        val lineText: @Composable () -> Unit = {
+            LineTextView(
+                plainText = translatedContent.getText(backgroundContent),
+                syllables = translatedContent.getSyllables(backgroundContent),
+                enableSyllable = enableSyllable,
+                enableKaraokeStyle = enableKaraokeStyle,
+                enableShadowEffect = enableShadowEffect,
+                progressiveColoring = progressiveColoring && mainSyllables.isEmpty(),
+                selectedLine = selectedLine,
+                contentColor = translationColor,
+                effectDuration = effectDuration,
+                progressFraction = progressFraction,
+                progressMillis = progressMillis,
+                style = translationStyle,
+                align = align,
+                modifier = Modifier.graphicsLayer {
+                    renderEffect = blurEffect
+                }
+            )
+        }
+
+        val lang = translation.lang?.takeIf { it.isNotBlank() }
+        if (showTranslationLanguage && lang != null) {
+            // Show a small pill with the language code beside the translated line.
+            Row(
+                horizontalArrangement = when (align) {
+                    TextAlign.End -> Arrangement.End
+                    TextAlign.Center -> Arrangement.Center
+                    else -> Arrangement.Start
+                },
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                LanguageBadge(
+                    lang = lang,
+                    color = translationColor,
+                    fontSize = translationStyle.fontSize
+                )
+                Spacer(modifier = Modifier.size(6.dp))
+                lineText()
+            }
+        } else {
+            lineText()
+        }
     }
+}
+
+@Composable
+private fun LanguageBadge(
+    lang: String,
+    color: Color,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = TranslationFilter.displayLanguageShort(lang),
+        color = color,
+        style = TextStyle(
+            fontSize = fontSize * 0.75f,
+            fontWeight = FontWeight.Bold
+        ),
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = color.copy(alpha = .5f),
+                shape = RoundedCornerShape(4.dp)
+            )
+            .padding(horizontal = 4.dp, vertical = 1.dp)
+    )
 }
 
 @Composable

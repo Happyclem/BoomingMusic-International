@@ -42,6 +42,17 @@ sealed interface TranslationFilter {
                 .ifBlank { lang }
         }
 
+        /**
+         * Short label for a language badge (e.g. "fr-FR" -> "FR"), keeping only the primary
+         * subtag and upper-casing it. Falls back to the raw code when parsing fails.
+         */
+        fun displayLanguageShort(lang: String): String {
+            val primary = java.util.Locale.forLanguageTag(lang).language.ifBlank {
+                lang.substringBefore('-')
+            }
+            return primary.uppercase(java.util.Locale.ROOT).ifBlank { lang }
+        }
+
         fun fromValue(value: String?): TranslationFilter = when (value) {
             null, VALUE_ALL -> All
             VALUE_OFF -> Off
