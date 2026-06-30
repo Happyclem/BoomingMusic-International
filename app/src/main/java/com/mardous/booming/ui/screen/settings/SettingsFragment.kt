@@ -23,6 +23,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -53,6 +54,16 @@ class SettingsFragment : AbsMainActivityFragment(R.layout.fragment_settings), Na
             setNavigationOnClickListener {
                 getOnBackPressedDispatcher().onBackPressed()
             }
+            menu.clear()
+            inflateMenu(R.menu.menu_settings)
+            setOnMenuItemClickListener { menuItem ->
+                if (menuItem.itemId == R.id.action_search) {
+                    childNavController?.navigate(R.id.action_to_settingsSearch)
+                    true
+                } else {
+                    false
+                }
+            }
         }
 
         materialSharedAxis(view)
@@ -65,7 +76,12 @@ class SettingsFragment : AbsMainActivityFragment(R.layout.fragment_settings), Na
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+        val isSearch = destination.id == R.id.nav_settings_search
+        // The search screen has its own toolbar with the input field, so hide the outer one there.
+        binding.appBarLayout.isVisible = !isSearch
         binding.appBarLayout.title = destination.label ?: getString(R.string.settings_title)
+        binding.appBarLayout.toolbar.menu.findItem(R.id.action_search)
+            ?.isVisible = destination.id == R.id.nav_home_preferences
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {}
