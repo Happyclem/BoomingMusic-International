@@ -433,6 +433,7 @@ class LyricsViewModel(
             Key.LINE_SPACING,
             Key.PROGRESSIVE_COLORING,
             Key.SHOW_TRANSLATION,
+            Key.SHOW_TRANSLATION_LANGUAGE,
             Key.TRANSLATION_LANGUAGE,
             Key.SHOW_TRANSLITERATION,
             Key.RESUME_ON_SEEK,
