@@ -33,6 +33,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.animation.doOnEnd
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.updatePadding
@@ -313,6 +314,8 @@ open class PreferenceScreenFragment : PreferenceFragmentCompat(),
         highlightPreferenceFromArguments()
     }
 
+    private var highlightAnimator: ValueAnimator? = null
+
     /**
      * When this screen is opened from the settings search, scroll to the requested preference and
      * briefly flash it so the user can see which setting they landed on.
@@ -323,28 +326,35 @@ open class PreferenceScreenFragment : PreferenceFragmentCompat(),
         arguments?.remove(SettingsSearchFragment.ARG_HIGHLIGHT_KEY)
         if (findPreference<Preference>(key) == null) return
         listView.post {
+            if (!isAdded) return@post
             scrollToPreference(key)
-            listView.postDelayed({ flashPreference(key) }, 300)
+            // Let the scroll settle so the target row is laid out before we flash it.
+            listView.postDelayed({
+                if (isAdded) flashPreference(key)
+            }, 300)
         }
     }
 
     private fun flashPreference(key: String) {
-        val view = this.view ?: return
         val position = (listView.adapter as? PreferenceGroup.PreferencePositionCallback)
             ?.getPreferenceAdapterPosition(key) ?: return
         if (position == RecyclerView.NO_POSITION) return
-        val holder = listView.findViewHolderForAdapterPosition(position) ?: return
-        val target = holder.itemView
-        val highlightColor = view.context.resolveColor(
+        val target = listView.findViewHolderForAdapterPosition(position)?.itemView ?: return
+
+        val highlightColor = target.context.resolveColor(
             com.google.android.material.R.attr.colorSecondaryContainer
         )
-        val original = (target.background as? ColorDrawable)?.color ?: Color.TRANSPARENT
-        ValueAnimator.ofArgb(original, highlightColor, original).apply {
+        // Animate the foreground so the row's background ripple stays intact.
+        highlightAnimator?.cancel()
+        highlightAnimator = ValueAnimator.ofFloat(1f, 0f).apply {
             duration = 1200
             addUpdateListener { animator ->
-                target.setBackgroundColor(animator.animatedValue as Int)
+                val fraction = animator.animatedValue as Float
+                target.foreground = ColorDrawable(
+                    ColorUtils.setAlphaComponent(highlightColor, (fraction * 96).toInt())
+                )
             }
-            doOnEnd { target.setBackgroundColor(original) }
+            doOnEnd { target.foreground = null }
             start()
         }
     }
@@ -651,6 +661,8 @@ open class PreferenceScreenFragment : PreferenceFragmentCompat(),
     }
 
     override fun onDestroyView() {
+        highlightAnimator?.cancel()
+        highlightAnimator = null
         super.onDestroyView()
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }

@@ -15,6 +15,7 @@ class LyricsViewSettings(
     val blurEffect: Boolean,
     val shadowEffect: Boolean,
     val showTranslation: Boolean,
+    val showTranslationLanguage: Boolean,
     val translationFilter: TranslationFilter,
     val showTransliteration: Boolean,
     val resumeOnSeek: Boolean,
@@ -51,6 +52,7 @@ class LyricsViewSettings(
             const val PROGRESSIVE_COLORING = "lyrics_progressive_coloring"
             const val BACKGROUND_EFFECT = "lyrics_background_effect"
             const val SHOW_TRANSLATION = "lyrics_show_translation"
+            const val SHOW_TRANSLATION_LANGUAGE = "lyrics_show_translation_language"
             const val TRANSLATION_LANGUAGE = "lyrics_translation_language"
             const val SHOW_TRANSLITERATION = "lyrics_show_transliteration"
             const val RESUME_ON_SEEK = "lyrics_resume_on_seek"

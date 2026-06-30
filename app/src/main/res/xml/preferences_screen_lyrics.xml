@@ -23,6 +23,16 @@
 
     <SwitchPreferenceCompat
         app:iconSpaceReserved="true"
+        app:title="@string/lyrics_show_translation_language_title"
+        app:summary="@string/lyrics_show_translation_language_summary"
+        app:defaultValue="false"
+        app:dependency="lyrics_show_translation"
+        app:layout="@layout/list_item_view"
+        app:widgetLayout="@layout/preference_switch"
+        app:key="lyrics_show_translation_language" />
+
+    <SwitchPreferenceCompat
+        app:iconSpaceReserved="true"
         app:title="@string/lyrics_show_transliteration_title"
         app:summary="@string/lyrics_show_transliteration_summary"
         app:defaultValue="false"

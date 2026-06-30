@@ -348,6 +348,7 @@ class LyricsViewModel(
         val enableKaraokeStyle = preferences.getBoolean(Key.ENABLE_KARAOKE_STYLE, false)
         val progressiveColoring = preferences.getBoolean(Key.PROGRESSIVE_COLORING, false)
         val showTranslation = preferences.getBoolean(Key.SHOW_TRANSLATION, true)
+        val showTranslationLanguage = preferences.getBoolean(Key.SHOW_TRANSLATION_LANGUAGE, false)
         val translationFilter = TranslationFilter.fromValue(
             preferences.getString(Key.TRANSLATION_LANGUAGE, null)
         )
@@ -405,6 +406,7 @@ class LyricsViewModel(
             blurEffect = blurEffect,
             shadowEffect = shadowEffect,
             showTranslation = showTranslation,
+            showTranslationLanguage = showTranslationLanguage,
             translationFilter = translationFilter,
             showTransliteration = showTransliteration,
             resumeOnSeek = resumeOnSeek,
