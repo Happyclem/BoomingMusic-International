@@ -17,9 +17,11 @@
 
 package com.mardous.booming.ui.screen.settings
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
@@ -30,6 +32,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
+import androidx.core.animation.doOnEnd
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.updatePadding
@@ -40,6 +43,8 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
+import androidx.recyclerview.widget.RecyclerView
 import coil3.SingletonImageLoader
 import com.google.android.material.color.DynamicColors
 import com.mardous.booming.BuildConfig
@@ -305,6 +310,43 @@ open class PreferenceScreenFragment : PreferenceFragmentCompat(),
         setDivider(Color.TRANSPARENT.toDrawable())
         materialSharedAxis(view)
         preparePreferences()
+        highlightPreferenceFromArguments()
+    }
+
+    /**
+     * When this screen is opened from the settings search, scroll to the requested preference and
+     * briefly flash it so the user can see which setting they landed on.
+     */
+    private fun highlightPreferenceFromArguments() {
+        val key = arguments?.getString(SettingsSearchFragment.ARG_HIGHLIGHT_KEY) ?: return
+        // Consume the argument so it doesn't fire again after a configuration change.
+        arguments?.remove(SettingsSearchFragment.ARG_HIGHLIGHT_KEY)
+        if (findPreference<Preference>(key) == null) return
+        listView.post {
+            scrollToPreference(key)
+            listView.postDelayed({ flashPreference(key) }, 300)
+        }
+    }
+
+    private fun flashPreference(key: String) {
+        val view = this.view ?: return
+        val position = (listView.adapter as? PreferenceGroup.PreferencePositionCallback)
+            ?.getPreferenceAdapterPosition(key) ?: return
+        if (position == RecyclerView.NO_POSITION) return
+        val holder = listView.findViewHolderForAdapterPosition(position) ?: return
+        val target = holder.itemView
+        val highlightColor = view.context.resolveColor(
+            com.google.android.material.R.attr.colorSecondaryContainer
+        )
+        val original = (target.background as? ColorDrawable)?.color ?: Color.TRANSPARENT
+        ValueAnimator.ofArgb(original, highlightColor, original).apply {
+            duration = 1200
+            addUpdateListener { animator ->
+                target.setBackgroundColor(animator.animatedValue as Int)
+            }
+            doOnEnd { target.setBackgroundColor(original) }
+            start()
+        }
     }
 
     fun preparePreferences() {

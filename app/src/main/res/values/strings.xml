@@ -631,6 +631,8 @@
     <string name="saf_delete_failed">File delete failed: %s</string>
 
     <string name="settings_title">Settings</string>
+    <string name="search_settings_title">Search settings</string>
+    <string name="search_settings_hint">Search settings…</string>
     <string name="appearance_title">Appearance</string>
     <string name="appearance_summary">Change the app\'s theme and other visual settings.</string>
     <string name="now_playing_title">Now playing</string>
