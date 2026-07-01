@@ -16,6 +16,12 @@
 
 </div>
 
+> 💌 **To the original developers, authors and contributors of Booming Music:** thank you for the
+> app this fork is built on. You are warmly welcome to take this fork as a whole, or cherry-pick any
+> part of the multilingual-lyrics work described below, back into upstream or into anything else —
+> no permission needed and no strings attached. It is all offered under the same **GPLv3** license,
+> and we'd be delighted to see it land upstream.
+
 ## 🌐 Multilingual lyrics (this fork)
 
 This fork extends the lyrics view so a single song can show **several translations at once** and lets
@@ -30,11 +36,15 @@ exactly like they do upstream.
   languages found in the current file, plus **Off** and **All languages**. The choice is remembered
   and applies everywhere (full screen and the now-playing cover).
 - **🎨 Per-language colors** — in **Settings → Lyrics → Translation colors**, give each detected
-  language a fixed color (preset swatches or a `#RRGGBB` hex value) so stacked translations are easy
-  to tell apart at a glance.
+  language a fixed color so stacked translations are easy to tell apart at a glance. Each language
+  opens a full **HSV color wheel** with a brightness slider and a `#RRGGBB` hex field, plus a **Use
+  default** option to clear it.
 - **🏷️ LRC language tags** — LRC/ELRC translation lines can declare their language with a bracket
   block right after the timestamp, e.g. `[00:12.00][fr]…` or `[00:12.00][pt-BR]…`. Untagged lines
   keep working as before.
+- **💾 Save lyrics to a local file** — from the lyrics editor you can **Export to file**, writing the
+  current lyrics to a standalone file outside the app (alongside the **Embedded / Downloaded / File**
+  sources), so edited or translated lyrics can be kept and shared as their own sidecar.
 
 ### 📸 Screenshots
 
@@ -46,9 +56,9 @@ exactly like they do upstream.
 <td align="center" width="33%"><img src="assets/intl/per_language_colors.png" alt="Per-language colors" width="220"/><br/>Per-language colors</td>
 </tr>
 <tr>
+<td align="center" width="33%"><img src="assets/intl/per_language_color_picker.png" alt="Per-language HSV color picker" width="220"/><br/>HSV color picker</td>
+<td align="center" width="33%"><img src="assets/intl/save_local_file.png" alt="Save lyrics to a local file" width="220"/><br/>Save lyrics to a file</td>
 <td align="center" width="33%"><img src="assets/intl/settings_search.png" alt="Settings search" width="220"/><br/>Settings search</td>
-<td align="center" width="33%"></td>
-<td align="center" width="33%"></td>
 </tr>
 </table>
 </div>
