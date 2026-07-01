@@ -45,11 +45,15 @@ exactly like they do upstream.
 <td align="center" width="33%"><img src="assets/intl/language_picker.png" alt="Language selector" width="220"/><br/>Language selector</td>
 <td align="center" width="33%"><img src="assets/intl/per_language_colors.png" alt="Per-language colors" width="220"/><br/>Per-language colors</td>
 </tr>
+<tr>
+<td align="center" width="33%"><img src="assets/intl/settings_search.png" alt="Settings search" width="220"/><br/>Settings search</td>
+<td align="center" width="33%"></td>
+<td align="center" width="33%"></td>
+</tr>
 </table>
 </div>
 
-> _Screenshots are placeholders until captured from a device/emulator — see
-> [`assets/intl/`](assets/intl/)._
+> _More screenshots live in [`assets/intl/`](assets/intl/)._
 
 ### 🧪 Try it without your own files
 
