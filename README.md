@@ -89,6 +89,37 @@ on any track:
 <img src="https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_red.png" alt="Support me on Ko-fi" style="border: 0px; height: 40px;" />
 </a>
 
+### ❤️ Supporters
+
+<table>
+  <tr>
+    <td>
+      <b>mbeezy</b><br/>
+      <b><a href="https://github.com/Qoojoe">KKTweex</a></b><br/>
+      <b><a href="https://github.com/FabiRich">FabiRich</a></b><br/>
+      <b><a href="https://github.com/Bloodaxe95">Bloodaxe</a></b>
+    </td>
+    <td>
+      <b>Bernhard</b><br/>
+      <b>Andreas Hirth</b><br/>
+      <b>Revolver327</b><br/>
+      <b>Peter Smith</b>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+## 🙌 Credits
+
+Inspired by [Retro Music Player](https://github.com/RetroMusicPlayer/RetroMusicPlayer).
+Also thanks to:
+
+- [AMLV](https://github.com/dokar3/amlv)
+- [LRCLib](https://lrclib.net/)
+- [Better Lyrics](https://better-lyrics.boidu.dev/)
+- [Lyrically API](https://lyrics.paxsenix.org/) (by [Alex](https://github.com/Paxsenix0))
+
 ## ⚖️ License
 
 ```

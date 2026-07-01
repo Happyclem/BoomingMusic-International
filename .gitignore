@@ -78,6 +78,8 @@ Gemfile.lock
 local.properties
 /.kotlin/
 
+get_weblate_translators.py
+
 # Local personal test media at the repo root (not for distribution)
 /*.mp3
 /*.flac
