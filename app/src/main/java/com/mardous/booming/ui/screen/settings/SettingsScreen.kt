@@ -31,6 +31,7 @@ enum class SettingsScreen(
     @IdRes val searchNavAction: Int,
     @StringRes val titleRes: Int
 ) {
+    WhatsNew(R.xml.preferences_screen_whats_new, R.id.action_to_whatsNewPreferences, R.id.action_to_whatsNewPreferences, R.string.whats_new_title),
     Appearance(R.xml.preferences_screen_appearance, R.id.action_to_appearancePreferences, R.id.action_search_to_appearancePreferences, R.string.appearance_title),
     NowPlaying(R.xml.preferences_screen_now_playing, R.id.action_to_nowPlayingPreferences, R.id.action_search_to_nowPlayingPreferences, R.string.now_playing_title),
     Lyrics(R.xml.preferences_screen_lyrics, R.id.action_to_lyricsPreferences, R.id.action_search_to_lyricsPreferences, R.string.lyrics_preferences_title),

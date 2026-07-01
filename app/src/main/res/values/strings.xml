@@ -654,6 +654,23 @@
     <string name="about_title">About</string>
     <string name="about_summary">Booming Music %s, touch for more info.</string>
 
+    <!-- What's new (International edition) -->
+    <string name="whats_new_title">What\'s new</string>
+    <string name="whats_new_summary">Features added by the International edition.</string>
+    <string name="whats_new_header">Added in this edition</string>
+    <string name="whats_new_multilingual_title">Multilingual lyrics</string>
+    <string name="whats_new_multilingual_summary">Show the original text with multiple translations stacked, from TTML and eLRC files.</string>
+    <string name="whats_new_language_selector_title">Translation language selector</string>
+    <string name="whats_new_language_selector_summary">Pick which translation language to display from the languages found in the lyrics.</string>
+    <string name="whats_new_language_badge_title">Language badge</string>
+    <string name="whats_new_language_badge_summary">Show a small language pill next to translated lines.</string>
+    <string name="whats_new_translation_colors_title">Per-language translation colors</string>
+    <string name="whats_new_translation_colors_summary">Assign a fixed color to each translation language using a color wheel picker.</string>
+    <string name="whats_new_export_lyrics_title">Export lyrics to a file</string>
+    <string name="whats_new_export_lyrics_summary">Save stored lyrics to an external .lrc or .ttml file from the lyrics editor.</string>
+    <string name="whats_new_settings_search_title">Settings search</string>
+    <string name="whats_new_settings_search_summary">Search through all preferences and jump straight to the matching setting.</string>
+
     <!-- Preference headers -->
     <string name="general_header">General</string>
     <string name="library_header">Library</string>

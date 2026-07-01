@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="@string/whats_new_header"
+        app:layout="@layout/preference_category_title">
+
+        <Preference
+            app:icon="@drawable/ic_translate_24dp"
+            app:title="@string/whats_new_multilingual_title"
+            app:summary="@string/whats_new_multilingual_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+        <Preference
+            app:icon="@drawable/ic_language_24dp"
+            app:title="@string/whats_new_language_selector_title"
+            app:summary="@string/whats_new_language_selector_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+        <Preference
+            app:icon="@drawable/ic_lyrics_outline_24dp"
+            app:title="@string/whats_new_language_badge_title"
+            app:summary="@string/whats_new_language_badge_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+        <Preference
+            app:icon="@drawable/ic_palette_24dp"
+            app:title="@string/whats_new_translation_colors_title"
+            app:summary="@string/whats_new_translation_colors_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+        <Preference
+            app:icon="@drawable/ic_file_export_24dp"
+            app:title="@string/whats_new_export_lyrics_title"
+            app:summary="@string/whats_new_export_lyrics_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+        <Preference
+            app:icon="@drawable/ic_search_24dp"
+            app:title="@string/whats_new_settings_search_title"
+            app:summary="@string/whats_new_settings_search_summary"
+            app:selectable="false"
+            app:persistent="false"
+            app:layout="@layout/list_item_view"/>
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
