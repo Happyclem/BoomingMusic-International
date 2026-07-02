@@ -147,12 +147,17 @@ enum class LyricsExportResult {
     Empty, Failed, Success
 }
 
+enum class LyricsLinkResult {
+    Success, Failed, Unlinked
+}
+
 @Immutable
 sealed class LyricsEditorUiState(open val isLoading: Boolean) {
     data object Disposed : LyricsEditorUiState(false)
     data class Visible(
         override val isLoading: Boolean,
-        val lyrics: Map<LyricsSource, RawLyrics?> = emptyMap()
+        val lyrics: Map<LyricsSource, RawLyrics?> = emptyMap(),
+        val linkedFileName: String? = null
     ) : LyricsEditorUiState(isLoading) {
         fun getLyricsContent(source: LyricsSource) = lyrics[source]?.lyrics.orEmpty()
     }
@@ -189,6 +194,14 @@ fun LyricsEditorScreen(
         pendingExportContent = null
         if (uri != null && content != null) {
             viewModel.exportLyrics(uri, content)
+        }
+    }
+
+    val linkFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.linkLyricsFile(song, uri)
         }
     }
 
@@ -261,6 +274,15 @@ fun LyricsEditorScreen(
         context.showToast(toastMessage)
     }
 
+    ObserveAsEvent(viewModel.linkEvent) { linkResult ->
+        val toastMessage = when (linkResult) {
+            LyricsLinkResult.Success -> context.getString(R.string.lyrics_file_linked)
+            LyricsLinkResult.Failed -> context.getString(R.string.invalid_lyrics_file)
+            LyricsLinkResult.Unlinked -> context.getString(R.string.lyrics_file_unlinked)
+        }
+        context.showToast(toastMessage)
+    }
+
     LaunchedEffect(Unit) {
         viewModel.loadEditorContent(song)
     }
@@ -271,6 +293,17 @@ fun LyricsEditorScreen(
     val editedContent = rememberSaveable(saver = SnapshotMapSaver) { mutableStateMapOf() }
     var selectedSource by rememberSaveable { mutableStateOf(LyricsSource.Embedded) }
     val isFileSource by remember { derivedStateOf { selectedSource == LyricsSource.File } }
+    val linkedFileName by remember {
+        derivedStateOf { (uiState as? LyricsEditorUiState.Visible)?.linkedFileName }
+    }
+
+    fun launchFilePicker() {
+        // MIME types are inconsistent across providers for .lrc/.ttml, so we accept a
+        // broad set and validate the extension when the file comes back.
+        linkFileLauncher.launch(
+            arrayOf("application/octet-stream", "application/ttml+xml", "text/*", "*/*")
+        )
+    }
 
     LaunchedEffect(uiState, selectedSource) {
         uiState.let {
@@ -534,6 +567,10 @@ fun LyricsEditorScreen(
 
                     LyricsFileNotice(
                         isFileSource = isFileSource,
+                        linkedFileName = linkedFileName,
+                        enabled = !uiState.isLoading,
+                        onChooseFileClick = { launchFilePicker() },
+                        onUnlinkClick = { viewModel.unlinkLyricsFile(song) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -587,6 +624,10 @@ fun LyricsEditorScreen(
 
                 LyricsFileNotice(
                     isFileSource = isFileSource,
+                    linkedFileName = linkedFileName,
+                    enabled = !uiState.isLoading,
+                    onChooseFileClick = { launchFilePicker() },
+                    onUnlinkClick = { viewModel.unlinkLyricsFile(song) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -901,17 +942,66 @@ private fun LyricsEditorBottomBar(
 @Composable
 fun ColumnScope.LyricsFileNotice(
     isFileSource: Boolean,
+    linkedFileName: String?,
+    enabled: Boolean,
+    onChooseFileClick: () -> Unit,
+    onUnlinkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
         visible = isFileSource,
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(R.string.cannot_edit_lyrics_file),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.cannot_edit_lyrics_file),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            if (linkedFileName != null) {
+                Text(
+                    text = stringResource(R.string.linked_lyrics_file, linkedFileName),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onChooseFileClick,
+                    enabled = enabled
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_file_open_24dp),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = stringResource(
+                            if (linkedFileName != null) R.string.replace_lyrics_file
+                            else R.string.choose_lyrics_file
+                        ),
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+                if (linkedFileName != null) {
+                    TextButton(
+                        onClick = onUnlinkClick,
+                        enabled = enabled
+                    ) {
+                        Text(stringResource(R.string.unlink_lyrics_file))
+                    }
+                }
+            }
+        }
     }
 }

@@ -14,9 +14,10 @@ import com.mardous.booming.data.local.room.*
         PlayCountEntity::class,
         QueueEntity::class,
         InclExclEntity::class,
-        LyricsEntity::class
+        LyricsEntity::class,
+        LyricsLinkEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class BoomingDatabase : RoomDatabase() {
@@ -26,6 +27,7 @@ abstract class BoomingDatabase : RoomDatabase() {
     abstract fun queueDao(): QueueDao
     abstract fun inclExclDao(): InclExclDao
     abstract fun lyricsDao(): LyricsDao
+    abstract fun lyricsLinkDao(): LyricsLinkDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -62,6 +64,18 @@ abstract class BoomingDatabase : RoomDatabase() {
                         lyrics TEXT,
                         provider TEXT,
                         is_instrumental INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS LyricsLinkEntity (
+                        id INTEGER PRIMARY KEY NOT NULL,
+                        uri TEXT NOT NULL,
+                        format TEXT NOT NULL
                     )
                 """.trimIndent())
             }

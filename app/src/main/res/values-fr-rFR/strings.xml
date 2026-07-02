@@ -934,6 +934,13 @@
     <string name="lrc_file_lyrics">LRC</string>
     <string name="undo_changes">Annuler les modifications</string>
     <string name="cannot_edit_lyrics_file">Vous ne pouvez pas modifier le contenu du fichier directement depuis Booming Music.</string>
+    <string name="choose_lyrics_file">Choisir un fichier</string>
+    <string name="replace_lyrics_file">Remplacer le fichier</string>
+    <string name="unlink_lyrics_file">Délier</string>
+    <string name="linked_lyrics_file">Fichier lié : %s</string>
+    <string name="lyrics_file_linked">Fichier de paroles lié. Il sera utilisé pour ce morceau.</string>
+    <string name="lyrics_file_unlinked">Fichier de paroles délié.</string>
+    <string name="invalid_lyrics_file">Veuillez choisir un fichier .lrc ou .ttml valide.</string>
     <string name="preferred_lyrics_file_format_title">Format de fichier préféré</string>
     <string name="preferred_lyrics_file_format_summary">Si un titre comporte des fichiers de paroles dans différents formats, cette option vous permet de choisir celui qui doit être privilégié.</string>
     <string name="lyrics_by_x">Paroles de %s</string>

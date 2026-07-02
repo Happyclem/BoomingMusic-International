@@ -45,6 +45,11 @@ exactly like they do upstream.
 - **💾 Save lyrics to a local file** — from the lyrics editor you can **Export to file**, writing the
   current lyrics to a standalone file outside the app (alongside the **Embedded / Downloaded / File**
   sources), so edited or translated lyrics can be kept and shared as their own sidecar.
+- **📎 Link a lyrics file per song** — in the lyrics editor's **File** tab you can **choose any
+  `.lrc`/`.ttml` file** on the device instead of relying on the auto-detected sidecar. The link is
+  remembered per song, so a local file with your own translations is picked up on every open without
+  re-selecting it, and it takes priority over embedded and online lyrics. **Unlink** any time to fall
+  back to automatic detection.
 
 ### 📸 Screenshots
 

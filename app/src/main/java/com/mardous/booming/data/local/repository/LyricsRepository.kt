@@ -1,10 +1,13 @@
 package com.mardous.booming.data.local.repository
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import android.util.LruCache
+import androidx.core.net.toUri
 import com.mardous.booming.data.local.EditTarget
 import com.mardous.booming.data.local.MetadataReader
 import com.mardous.booming.data.local.MetadataWriter
@@ -12,6 +15,8 @@ import com.mardous.booming.data.local.lyrics.lrc.LrcLyricsParser
 import com.mardous.booming.data.local.lyrics.ttml.TtmlLyricsParser
 import com.mardous.booming.data.local.room.LyricsDao
 import com.mardous.booming.data.local.room.LyricsEntity
+import com.mardous.booming.data.local.room.LyricsLinkDao
+import com.mardous.booming.data.local.room.LyricsLinkEntity
 import com.mardous.booming.data.model.Song
 import com.mardous.booming.data.model.lyrics.LyricsFile
 import com.mardous.booming.data.model.lyrics.LyricsSource
@@ -36,6 +41,10 @@ interface LyricsRepository {
     suspend fun storedLyrics(song: Song, allowDownload: Boolean): RawLyrics.Stored?
     suspend fun downloadLyrics(song: Song, searchTitle: String, searchArtist: String): RawLyrics.Remote?
 
+    suspend fun linkedLyricsFile(song: Song): LyricsFile?
+    suspend fun linkLyricsFile(song: Song, uri: Uri): LyricsFile?
+    suspend fun unlinkLyricsFile(song: Song)
+
     suspend fun saveLyrics(
         song: Song,
         originalLyricsBySource: Map<LyricsSource, RawLyrics?>,
@@ -50,7 +59,8 @@ class RealLyricsRepository(
     private val context: Context,
     private val preferences: SharedPreferences,
     private val lyricsDownloadService: LyricsDownloadService,
-    private val lyricsDao: LyricsDao
+    private val lyricsDao: LyricsDao,
+    private val lyricsLinkDao: LyricsLinkDao
 ) : LyricsRepository {
 
     private val memoryCache = LruCache<Long, Map<LyricsSource, RawLyrics>>(20)
@@ -98,6 +108,10 @@ class RealLyricsRepository(
 
     override suspend fun fileLyrics(song: Song): RawLyrics.File? {
         getCachedLyrics<RawLyrics.File>(LyricsSource.File, song.id)?.let { return it }
+
+        // A file explicitly linked by the user always wins over auto-detection.
+        readLinkedLyrics(song)?.let { return cacheLyrics(song.id, it) }
+
         try {
             val preferredFormatValue =
                 preferences.requireString("preferred_lyrics_file_format", "ttml")
@@ -200,6 +214,86 @@ class RealLyricsRepository(
         }
     }
 
+    override suspend fun linkedLyricsFile(song: Song): LyricsFile? {
+        if (song.id == Song.emptySong.id) return null
+        val link = lyricsLinkDao.getLink(song.id) ?: return null
+        val format = LyricsFile.Format.entries.firstOrNull { it.value == link.format }
+            ?: return null
+        return LyricsFile(link.uri, format)
+    }
+
+    override suspend fun linkLyricsFile(song: Song, uri: Uri): LyricsFile? {
+        if (song.id == Song.emptySong.id) return null
+
+        val displayName = queryDisplayName(uri)
+        val format = LyricsFile.Format.entries.firstOrNull { format ->
+            displayName?.endsWith(".${format.value}", ignoreCase = true) == true
+        } ?: return null
+
+        // Verify the file is actually readable before persisting the link.
+        val readable = runCatching {
+            context.contentResolver.openInputStream(uri)?.use { true } ?: false
+        }.getOrDefault(false)
+        if (!readable) return null
+
+        runCatching {
+            context.contentResolver.takePersistableUriPermission(
+                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
+
+        lyricsLinkDao.upsertLink(
+            LyricsLinkEntity(id = song.id, uri = uri.toString(), format = format.value)
+        )
+        removeCachedLyrics(LyricsSource.File, song.id)
+        return LyricsFile(uri.toString(), format)
+    }
+
+    override suspend fun unlinkLyricsFile(song: Song) {
+        if (song.id == Song.emptySong.id) return
+        val link = lyricsLinkDao.getLink(song.id)
+        if (link != null) {
+            runCatching {
+                context.contentResolver.releasePersistableUriPermission(
+                    link.uri.toUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+            lyricsLinkDao.removeLink(song.id)
+            removeCachedLyrics(LyricsSource.File, song.id)
+        }
+    }
+
+    private suspend fun readLinkedLyrics(song: Song): RawLyrics.File? {
+        val lyricsFile = linkedLyricsFile(song) ?: return null
+        return try {
+            val lyrics = context.contentResolver.openInputStream(lyricsFile.path.toUri())
+                ?.buffered()
+                ?.use { stream ->
+                    val charset = detectEncoding(stream)
+                    stream.reader(charset).use { it.readText() }
+                }
+            if (!lyrics.isNullOrEmpty()) {
+                RawLyrics.File(lyricsFile, lyrics)
+            } else null
+        } catch (e: Exception) {
+            Log.e(TAG, "Couldn't read linked lyrics file for song ${song.data}", e)
+            null
+        }
+    }
+
+    private fun queryDisplayName(uri: Uri): String? {
+        return runCatching {
+            context.contentResolver.query(
+                uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (index != -1) cursor.getString(index) else null
+                } else null
+            }
+        }.getOrNull() ?: uri.lastPathSegment
+    }
+
     override suspend fun saveLyrics(
         song: Song,
         originalLyricsBySource: Map<LyricsSource, RawLyrics?>,
@@ -271,6 +365,14 @@ class RealLyricsRepository(
 
     override suspend fun deleteAllLyrics() {
         lyricsDao.removeLyrics()
+        for (link in lyricsLinkDao.getAllLinks()) {
+            runCatching {
+                context.contentResolver.releasePersistableUriPermission(
+                    link.uri.toUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+        }
+        lyricsLinkDao.removeLinks()
         memoryCache.evictAll()
     }
 

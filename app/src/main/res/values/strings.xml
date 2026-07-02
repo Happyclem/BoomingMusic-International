@@ -548,6 +548,13 @@
     <string name="font_imported_successfully">Font imported successfully.</string>
     <string name="could_not_import_font">Could not import font.</string>
     <string name="cannot_edit_lyrics_file">You cannot edit the file content directly from Booming Music.</string>
+    <string name="choose_lyrics_file">Choose a file</string>
+    <string name="replace_lyrics_file">Replace file</string>
+    <string name="unlink_lyrics_file">Unlink</string>
+    <string name="linked_lyrics_file">Linked file: %s</string>
+    <string name="lyrics_file_linked">Lyrics file linked. It will be used for this song.</string>
+    <string name="lyrics_file_unlinked">Lyrics file unlinked.</string>
+    <string name="invalid_lyrics_file">Please choose a valid .lrc or .ttml file.</string>
     <string name="lyrics_by_x">Lyrics by %s</string>
     <string name="export_to_file">Export to file</string>
     <string name="lyrics_exported_successfully">Lyrics exported successfully.</string>

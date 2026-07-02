@@ -155,7 +155,8 @@ private val roomModule = module {
                 BoomingDatabase.MIGRATION_2_3,
                 BoomingDatabase.MIGRATION_3_4,
                 BoomingDatabase.MIGRATION_4_5,
-                BoomingDatabase.MIGRATION_5_6
+                BoomingDatabase.MIGRATION_5_6,
+                BoomingDatabase.MIGRATION_6_7
             )
             .build()
     }
@@ -182,6 +183,10 @@ private val roomModule = module {
 
     factory {
         get<BoomingDatabase>().lyricsDao()
+    }
+
+    factory {
+        get<BoomingDatabase>().lyricsLinkDao()
     }
 }
 
@@ -256,7 +261,8 @@ private val dataModule = module {
             context = androidContext(),
             preferences = get(),
             lyricsDownloadService = get(),
-            lyricsDao = get()
+            lyricsDao = get(),
+            lyricsLinkDao = get()
         )
     } bind LyricsRepository::class
 

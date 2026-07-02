@@ -69,6 +69,9 @@ class LyricsViewModel(
     private val _saveEvent = Channel<LyricsEditorResult>(Channel.BUFFERED)
     val saveEvent = _saveEvent.receiveAsFlow()
 
+    private val _linkEvent = Channel<LyricsLinkResult>(Channel.BUFFERED)
+    val linkEvent = _linkEvent.receiveAsFlow()
+
     private val _downloadEvent = Channel<RawLyrics.Remote>(Channel.BUFFERED)
     val downloadEvent = _downloadEvent.receiveAsFlow()
 
@@ -118,9 +121,57 @@ class LyricsViewModel(
         val lyrics = getEditorLyricsBySources(song, LyricsSource.entries)
         _lyricsEditorUiState.value = LyricsEditorUiState.Visible(
             isLoading = false,
-            lyrics = lyrics
+            lyrics = lyrics,
+            linkedFileName = linkedFileName(song)
         )
     }
+
+    fun linkLyricsFile(song: Song, uri: Uri) = viewModelScope.launch(IO) {
+        val uiState = _lyricsEditorUiState.updateAndGet {
+            if (it is LyricsEditorUiState.Visible) it.copy(isLoading = true) else it
+        }
+        if (uiState is LyricsEditorUiState.Visible) {
+            val linked = repository.linkLyricsFile(song, uri)
+            _linkEvent.send(if (linked != null) LyricsLinkResult.Success else LyricsLinkResult.Failed)
+            refreshAfterLink(song, uiState)
+        }
+    }
+
+    fun unlinkLyricsFile(song: Song) = viewModelScope.launch(IO) {
+        val uiState = _lyricsEditorUiState.updateAndGet {
+            if (it is LyricsEditorUiState.Visible) it.copy(isLoading = true) else it
+        }
+        if (uiState is LyricsEditorUiState.Visible) {
+            repository.unlinkLyricsFile(song)
+            _linkEvent.send(LyricsLinkResult.Unlinked)
+            refreshAfterLink(song, uiState)
+        }
+    }
+
+    private suspend fun refreshAfterLink(song: Song, uiState: LyricsEditorUiState.Visible) {
+        val lyrics = getEditorLyricsBySources(song, uiState.lyrics.keys.toList())
+        _lyricsEditorUiState.value = uiState.copy(
+            isLoading = false,
+            lyrics = lyrics,
+            linkedFileName = linkedFileName(song)
+        )
+        if (song.id == lyricsUiState.value.id) {
+            updateSong(song)
+        }
+    }
+
+    private suspend fun linkedFileName(song: Song): String? =
+        repository.linkedLyricsFile(song)?.let { file ->
+            val uri = Uri.parse(file.path)
+            getApplication<Application>().contentResolver.query(
+                uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (index != -1) cursor.getString(index) else null
+                } else null
+            } ?: uri.lastPathSegment
+        }
 
     fun disposeEditorContent() = viewModelScope.launch(IO) {
         _lyricsEditorUiState.value = LyricsEditorUiState.Disposed
