@@ -246,15 +246,6 @@
     <string name="download_image">Bild herunterladen</string>
     <string name="pick_from_local_storage">Aus lokalem Speicher wählen</string>
     <string name="about_x_title">Info zu %s</string>
-    <string name="listeners_label">Hörer</string>
-    <string name="scrobbles_label">Scrobbles</string>
-    <string name="save_cover">Albumcover speichern</string>
-    <string name="saving_cover_please_wait">Cover wird gespeichert, bitte warten…</string>
-    <string name="save_artwork_error">Fehler beim Speichern des Covers im lokalen Speicher</string>
-    <string name="save_artwork_success">Albumcover gespeichert</string>
-    <string name="save_artwork_view_action">Ansehen</string>
-    <string name="save_artwork_copyright_info_title">Urheberrechtshinweis</string>
-    <string name="save_artwork_copyright_info_message">Einige Albumcover (oder alle) könnten urheberrechtlich geschützt sein. Sie dürfen nicht gewerblich oder zu Werbezwecken genutzt werden. \n\nDie volle Verantwortung für die Verwendung der gespeicherten Albumcover liegt allein bei Dir selbst.</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="keyboard">Tastatur</string>
@@ -955,4 +946,10 @@
     <string name="lyrics_karaoke_style_summary">Aktiviert einen Karaoke-Stil für Wort-für-Wort synchronisierte Liedtexte. Bitte beachten Sie, dass es sich hierbei um eine experimentelle Funktion handelt.</string>
     <string name="lyrics_bold_synced_title">Fette Schrift für synchronisierte Liedtexte</string>
     <string name="lyrics_bold_synced_summary">Stellt synchronisierte Liedtexte fett dar.</string>
+    <string name="lyrics_show_translation_title">Übersetzung anzeigen</string>
+    <string name="lyrics_show_translation_summary">Übersetzte Liedtexte anzeigen, wenn verfügbar.</string>
+    <string name="lyrics_show_transliteration_title">Transliteration anzeigen</string>
+    <string name="lyrics_show_transliteration_summary">Transliterierte Liedtexte anzeigen, wenn verfügbar.</string>
+    <string name="lyrics_resume_on_seek_title">Nach Suche fortsetzen</string>
+    <string name="lyrics_resume_on_seek_summary">Wiedergabe automatisch fortgesetzen, wenn auf eine Zeile geklickt wird.</string>
 </resources>

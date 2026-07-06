@@ -86,6 +86,7 @@ import com.mardous.booming.extensions.openUrl
 import com.mardous.booming.extensions.toChooser
 import com.mardous.booming.extensions.tryStartActivity
 import com.mardous.booming.ui.component.compose.CollapsibleAppBarScaffold
+import com.mardous.booming.util.Constants
 import com.mardous.booming.util.Constants.AUTHOR_GITHUB_URL
 import com.mardous.booming.util.Constants.DONATION_LINK
 import com.mardous.booming.util.Constants.DOWNLOAD_URL
@@ -93,17 +94,14 @@ import com.mardous.booming.util.Constants.FAQ_LINK
 import com.mardous.booming.util.Constants.GITHUB_URL
 import com.mardous.booming.util.Constants.RELEASES_LINK
 import com.mardous.booming.util.Constants.SUPPORT_EMAIL
-import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import com.mikepenz.aboutlibraries.ui.compose.m3.libraryColors
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutScreen(
-    onBackClick: () -> Unit,
-    onNavigateToId: (Int) -> Unit
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -159,15 +157,7 @@ fun AboutScreen(
             ) {
                 LibrariesContainer(
                     libraries = libraries,
-                    showDescription = true,
                     licenseDialogConfirmText = stringResource(R.string.close_action),
-                    colors = LibraryDefaults.libraryColors(
-                        libraryBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = .8f)
-                    ),
-                    dimensions = LibraryDefaults.libraryDimensions(
-                        itemSpacing = ListItemDefaults.SegmentedGap
-                    ),
-                    libraryModifier = Modifier.clip(RoundedCornerShape(4.dp)),
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(16.dp))
@@ -578,7 +568,7 @@ private fun getAboutSections(
                 icon = { AboutItemIcon(painterResource(R.drawable.ic_groups_24dp)) },
                 title = stringResource(R.string.more_contributors_title),
                 summary = stringResource(R.string.more_contributors_summary),
-                onClick = { context.openUrl(BuildConfig.COMMUNITY_LINK) }
+                onClick = { context.openUrl(Constants.COMMUNITY_LINK) }
             )
         ),
         stringResource(R.string.support_development) to listOf(
@@ -586,19 +576,19 @@ private fun getAboutSections(
                 icon = { AboutItemIcon(painterResource(R.drawable.ic_bug_report_24dp)) },
                 title = stringResource(R.string.report_bugs),
                 summary = stringResource(R.string.report_bugs_summary),
-                onClick = { context.openUrl(BuildConfig.ISSUE_TRACKER_LINK) }
+                onClick = { context.openUrl(Constants.ISSUE_TRACKER_LINK) }
             ),
             AboutItemData(
                 icon = { AboutItemIcon(painterResource(R.drawable.ic_language_24dp)) },
                 title = stringResource(R.string.help_with_translations),
                 summary = stringResource(R.string.help_with_translations_summary),
-                onClick = { context.openUrl(BuildConfig.TRANSLATIONS_LINK) }
+                onClick = { context.openUrl(Constants.TRANSLATIONS_LINK) }
             ),
             AboutItemData(
                 icon = { AboutItemIcon(painterResource(R.drawable.ic_telegram_24dp)) },
                 title = stringResource(R.string.telegram_community),
                 summary = stringResource(R.string.telegram_community_summary),
-                onClick = { context.openUrl(BuildConfig.TELEGRAM_COMMUNITY_LINK) }
+                onClick = { context.openUrl(Constants.TELEGRAM_COMMUNITY_LINK) }
             ),
             AboutItemData(
                 icon = { AboutItemIcon(painterResource(R.drawable.ic_share_24dp)) },

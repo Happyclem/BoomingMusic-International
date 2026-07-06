@@ -246,15 +246,6 @@
     <string name="download_image">Scarica immagine</string>
     <string name="pick_from_local_storage">Scegli dalla memoria interna</string>
     <string name="about_x_title">Informazioni su %s</string>
-    <string name="listeners_label">Ascoltatori</string>
-    <string name="scrobbles_label">Scrobbling</string>
-    <string name="save_cover">Salva copertina album</string>
-    <string name="saving_cover_please_wait">Salvataggio copertura, attendere…</string>
-    <string name="save_artwork_error">Impossibile salvare la copertina nella memoria interna</string>
-    <string name="save_artwork_success">Copertina album salvata</string>
-    <string name="save_artwork_view_action">Visualizza</string>
-    <string name="save_artwork_copyright_info_title">Avviso sul copyright</string>
-    <string name="save_artwork_copyright_info_message">Alcune o tutte le copertine degli album potrebbero essere protette dalle leggi sul copyright. Non è possibile utilizzare tali immagini per scopi commerciali o pubblicitari. \n\nSolo tu sei totalmente responsabile dell\'utilizzo delle copertine salvate.</string>
     <string name="yes">Sì</string>
     <string name="no">No</string>
     <string name="keyboard">Tastiera</string>
@@ -956,4 +947,6 @@
     <string name="lyrics_karaoke_style_summary">Abilita un effetto in stile karaoke per i testi sincronizzati parola per parola. Nota: questa è una funzione sperimentale.</string>
     <string name="lyrics_bold_synced_title">Grassetto per i testi sincronizzati</string>
     <string name="lyrics_bold_synced_summary">Mostra i testi sincronizzati con carattere grassetto.</string>
+    <string name="lyrics_show_translation_title">Visualizza traduzione</string>
+    <string name="lyrics_show_transliteration_title">Mostra translitterazione</string>
 </resources>

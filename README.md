@@ -20,6 +20,13 @@
 > [#474](https://github.com/mardous/BoomingMusic/issues/474),
 > [#475](https://github.com/mardous/BoomingMusic/issues/475).
 
+[![Latest Release](https://img.shields.io/github/v/release/mardous/BoomingMusic?style=for-the-badge&label=Release&logo=github)](https://github.com/mardous/BoomingMusic/releases/latest)
+[![F-Droid version](https://img.shields.io/f-droid/v/com.mardous.booming?style=for-the-badge&label=F-Droid&logo=fdroid)](https://f-droid.org/packages/com.mardous.booming/)
+[![Downloads](https://img.shields.io/github/downloads/mardous/BoomingMusic/total?style=for-the-badge&logo=github&label=Downloads)](https://github.com/mardous/BoomingMusic/releases)
+[![License: GPL v3](https://img.shields.io/github/license/mardous/BoomingMusic?style=for-the-badge&color=orange&label=License&logo=gnu)](LICENSE.txt)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor_Covenant-2.1-4baaaa.svg?style=for-the-badge&logo=contributorcovenant)](CODE_OF_CONDUCT.md)
+[![Telegram Channel](https://img.shields.io/badge/Telegram-Join_Chat-blue?style=for-the-badge&logo=telegram)](https://t.me/mardousdev)
+
 </div>
 
 > 💌 **To the original developers, authors and contributors of Booming Music:** thank you for the
@@ -128,7 +135,39 @@ address open requests on the upstream tracker.
 ./gradlew :app:testNormalDebugUnitTest --tests "com.mardous.booming.data.local.lyrics.*"
 ```
 
+## 📥 Download & Install
 
+Booming Music is available for download from various sources:
+
+<div align="center">
+
+|                                                                                   Source                                                                                    | Details                                   |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------|
+|                               [<img src="assets/badge-playstore.png" alt="Play Store" height="35">](https://github.com/mardous/BoomingMusic)                                | Coming soon!                              |                                     |
+|                      [<img src="assets/badge-github.png" alt="GitHub Releases" height="35">](https://github.com/mardous/BoomingMusic/releases/latest)                       | Direct APK download                       |
+|                              [<img src="assets/badge-fdroid.png" alt="F-Droid" height="35">](https://f-droid.org/packages/com.mardous.booming)                              | Fully FOSS version                        |
+|                       [<img src="assets/badge-izzyondroid.png" alt="IzzyOnDroid" height="35">](https://apt.izzysoft.de/packages/com.mardous.booming/)                       | Just like F-Droid but with faster updates |                         |
+| [<img src="assets/badge-obtainium.png" alt="Obtainium" height="35">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/mardous/BoomingMusic/) | Automatic updates from GitHub             |
+|                         [<img src="assets/badge-openapk.png" alt="OpenAPK" height="35">](https://www.openapk.net/boomingmusic/com.mardous.booming/)                         | Alternative APK source                    |
+
+</div>
+
+> ℹ️ The download links above point to the **upstream** Booming Music releases. This International
+> fork is currently built from source (see [🛠️ Build it yourself](#-build-it-yourself)).
+
+## 💻 Tech Stack
+
+| Layer                   | Technology                                                     |
+|:------------------------|:---------------------------------------------------------------|
+| 🎧 Audio Engine         | [Media3 ExoPlayer](https://developer.android.com/media/media3) |
+| 🧱 Architecture         | MVVM + Repository Pattern                                      |
+| 💾 Persistence          | Room Database                                                  |
+| ⚙️ Dependency Injection | [Koin](https://insert-koin.io/)                                |
+| 🧵 Async                | Kotlin Coroutines & Flow                                       |
+| 🧩 UI                   | Android Views + Jetpack Compose (hybrid)                       |
+| 🖼️ Image Loading       | [Coil](https://coil-kt.github.io/coil/)                        |
+| 🎨 Design               | Material 3 / Material You                                      |
+| 🗣️ Language            | Kotlin                                                         |
 
 <div align="center">
 
@@ -144,13 +183,14 @@ address open requests on the upstream tracker.
       <b>mbeezy</b><br/>
       <b><a href="https://github.com/Qoojoe">KKTweex</a></b><br/>
       <b><a href="https://github.com/FabiRich">FabiRich</a></b><br/>
-      <b><a href="https://github.com/Bloodaxe95">Bloodaxe</a></b>
+      <b><a href="https://github.com/Bloodaxe95">Bloodaxe</a></b><br/>
+      <b>Bernhard</b>
     </td>
     <td>
-      <b>Bernhard</b><br/>
       <b>Andreas Hirth</b><br/>
       <b>Revolver327</b><br/>
-      <b>Peter Smith</b>
+      <b>Peter Smith</b><br/>
+      <b>Michele Simoncelli</b>
     </td>
   </tr>
 </table>

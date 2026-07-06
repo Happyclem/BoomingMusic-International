@@ -246,15 +246,6 @@
     <string name="download_image">Descargar imagen</string>
     <string name="pick_from_local_storage">Seleccionar desde el almacenamiento interno</string>
     <string name="about_x_title">Acerca de %s</string>
-    <string name="listeners_label">Oyentes</string>
-    <string name="scrobbles_label">Envíos</string>
-    <string name="save_cover">Guardar portada del álbum</string>
-    <string name="saving_cover_please_wait">Guardando portada, espere…</string>
-    <string name="save_artwork_error">No se pudo guardar la portada en el almacenamiento</string>
-    <string name="save_artwork_success">Portada del álbum guardada</string>
-    <string name="save_artwork_view_action">Ver</string>
-    <string name="save_artwork_copyright_info_title">Aviso de Copyright</string>
-    <string name="save_artwork_copyright_info_message">Algunas portadas de álbumes (o quizás todas) están protegidas por leyes de Copyright. No puedes hacer uso de estas imágenes para propósitos comerciales. \n\nSolo tú tienes total responsabilidad sobre el uso que hagas de las portadas guardadas.</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="keyboard">Teclado</string>
@@ -964,4 +955,14 @@
     <string name="lyrics_karaoke_style_summary">Habilita un efecto de karaoke para letras sincronizadas palabra por palabra. Ten en cuenta que esta es una función experimental.</string>
     <string name="lyrics_bold_synced_title">Resaltar las letras sincronizadas</string>
     <string name="lyrics_bold_synced_summary">Aplica una fuente negrita para las letras sincronizadas.</string>
+    <string name="lyrics_show_translation_title">Mostrar traducción</string>
+    <string name="lyrics_show_translation_summary">Muestra la traducción de la letra si está disponible.</string>
+    <string name="lyrics_show_transliteration_title">Mostrar transliteración</string>
+    <string name="lyrics_show_transliteration_summary">Muestra la transliteración de la letra si está disponible.</string>
+    <string name="lyrics_resume_on_seek_title">Resumir al buscar</string>
+    <string name="lyrics_resume_on_seek_summary">Resume la reproducción automáticamente al tocar una línea.</string>
+    <string name="app_version_x">Versión %s</string>
+    <string name="app_description">Diseño moderno. Sonido puro. Totalmente tuyo.</string>
+    <string name="more_contributors_title">Más colaboradores</string>
+    <string name="more_contributors_summary">Puedes ver la lista completa de colaboradores en GitHub.</string>
 </resources>

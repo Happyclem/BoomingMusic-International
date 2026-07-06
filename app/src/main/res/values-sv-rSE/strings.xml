@@ -246,15 +246,6 @@
     <string name="download_image">Ladda ner bild</string>
     <string name="pick_from_local_storage">Välj från lokal lagring</string>
     <string name="about_x_title">Om %s</string>
-    <string name="listeners_label">Lyssnare</string>
-    <string name="scrobbles_label">Scrobbla</string>
-    <string name="save_cover">Spara albumomslag</string>
-    <string name="saving_cover_please_wait">Sparar omslag, vänta…</string>
-    <string name="save_artwork_error">Det gick inte att spara omslaget till lokal lagring</string>
-    <string name="save_artwork_success">Skivomslag sparat</string>
-    <string name="save_artwork_view_action">Visa</string>
-    <string name="save_artwork_copyright_info_title">Meddelande om upphovsrätt</string>
-    <string name="save_artwork_copyright_info_message">Vissa skivomslag (eller alla av dem) kan skyddas av upphovsrättslagar. Du kan inte använda sådana bilder för kommersiella eller reklamändamål. \n\nBara du har totalansvar för din användning av sparade skivomslag.</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="keyboard">Tangentbord</string>
@@ -955,4 +946,10 @@
     <string name="lyrics_karaoke_style_summary">Aktiverar en karaoke-stil effekt för synkroniserade sångtexter ord för ord. Observera att detta är en experimentell funktion.</string>
     <string name="lyrics_bold_synced_title">Fet typsnitt för synkroniserade sångtexter</string>
     <string name="lyrics_bold_synced_summary">Visa synkroniserade sångtexter med fetstil.</string>
+    <string name="lyrics_show_translation_title">Visa översättning</string>
+    <string name="lyrics_show_translation_summary">Visa översatta sångtexter om sådana finns.</string>
+    <string name="lyrics_show_transliteration_title">Visa translitteration</string>
+    <string name="lyrics_show_transliteration_summary">Visa translittererade sångtexter om sådana finns.</string>
+    <string name="lyrics_resume_on_seek_title">Återuppta vid sökning</string>
+    <string name="lyrics_resume_on_seek_summary">Återuppta uppspelningen automatiskt när man klickar på en rad.</string>
 </resources>

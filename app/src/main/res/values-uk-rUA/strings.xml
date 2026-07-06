@@ -246,15 +246,6 @@
     <string name="download_image">Завантажити зображення</string>
     <string name="pick_from_local_storage">Вибрати з локального сховища</string>
     <string name="about_x_title">Про програму %s</string>
-    <string name="listeners_label">Слухачі</string>
-    <string name="scrobbles_label">Персоналізація</string>
-    <string name="save_cover">Зберегти обкладинку альбому</string>
-    <string name="saving_cover_please_wait">Збереження обкладинки, зачекайте…</string>
-    <string name="save_artwork_error">Не вдалося зберегти обкладинку до локального сховища</string>
-    <string name="save_artwork_success">Обкладинка альбому збережена</string>
-    <string name="save_artwork_view_action">Переглянути</string>
-    <string name="save_artwork_copyright_info_title">Повідомлення про авторські права</string>
-    <string name="save_artwork_copyright_info_message">Деякі обкладинки альбомів (або всі) можуть бути захищені авторськими правами. Ви не можете використовувати такі зображення в комерційних або рекламних цілях. \n\nВи несете повну відповідальність за використання збережених обкладинок альбомів.</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="keyboard">Клавіатура</string>
@@ -973,4 +964,10 @@
     <string name="lyrics_karaoke_style_summary">Умикає ефект у форматі караоке для синхронізації тексту пісні слово за словом. Зверніть увагу, що ця функція є експериментальною.</string>
     <string name="lyrics_bold_synced_title">Жирний шрифт для синхронізованих текстів</string>
     <string name="lyrics_bold_synced_summary">Показує синхронізовані тексти пісень жирним шрифтом.</string>
+    <string name="lyrics_show_translation_title">Показати переклад</string>
+    <string name="lyrics_show_translation_summary">Показувати переклад тексту пісні, якщо він доступний.</string>
+    <string name="lyrics_show_transliteration_title">Показати транслітерацію</string>
+    <string name="lyrics_show_transliteration_summary">Показувати транслітерацію тексту пісні, якщо вона доступна.</string>
+    <string name="lyrics_resume_on_seek_title">Відновити пошук</string>
+    <string name="lyrics_resume_on_seek_summary">Автоматично відновлювати відтворення при натисканні на рядок.</string>
 </resources>

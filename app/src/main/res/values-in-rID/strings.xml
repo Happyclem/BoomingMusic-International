@@ -246,15 +246,6 @@
     <string name="download_image">Unduh gambar</string>
     <string name="pick_from_local_storage">Pilih dari penyimpanan lokal</string>
     <string name="about_x_title">Tentang %s</string>
-    <string name="listeners_label">Pendengar</string>
-    <string name="scrobbles_label">Scrobble</string>
-    <string name="save_cover">Simpan sampul album</string>
-    <string name="saving_cover_please_wait">Menyimpan sampul, harap tunggu…</string>
-    <string name="save_artwork_error">Gagal menyimpan sampul ke penyimpanan lokal</string>
-    <string name="save_artwork_success">Sampul album tersimpan</string>
-    <string name="save_artwork_view_action">Lihat</string>
-    <string name="save_artwork_copyright_info_title">Pemberitahuan hak cipta</string>
-    <string name="save_artwork_copyright_info_message">Beberapa sampul album (atau semua) mungkin dilindungi oleh undang-undang Hak Cipta. Anda tidak dapat menggunakan gambar tersebut untuk keperluan komersial atau iklan.\n\nHanya Anda yang bertanggung jawab penuh atas penggunaan sampul album yang disimpan.</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
     <string name="keyboard">Keyboard</string>
@@ -940,4 +931,20 @@
     <string name="eq_pre_gain">Pre-gain</string>
     <string name="eq_post_gain">Post-gain</string>
     <string name="file_lyrics">Berkas</string>
+    <string name="rg_with_tag">Dengan tag</string>
+    <string name="rg_without_tag">Tanpa tag</string>
+    <string name="app_version_x">Versi %s</string>
+    <string name="app_description">Desain modern. Suara murni. Sepenuhnya milik Anda.</string>
+    <string name="more_contributors_title">Kontributor lainnya</string>
+    <string name="more_contributors_summary">Anda dapat melihat daftar lengkap kontributor di GitHub.</string>
+    <string name="lyrics_karaoke_style_title">Lirik bergaya karaoke</string>
+    <string name="lyrics_karaoke_style_summary">Mengaktifkan efek bergaya karaoke untuk lirik yang tersinkron kata demi kata. Harap diperhatikan bahwa ini adalah fitur eksperimental.</string>
+    <string name="lyrics_show_translation_title">Tampilkan terjemahan</string>
+    <string name="lyrics_show_translation_summary">Tampilkan lirik terjemahan jika tersedia.</string>
+    <string name="lyrics_show_transliteration_title">Tampilkan transliterasi</string>
+    <string name="lyrics_show_transliteration_summary">Tampilkan lirik hasil transliterasi jika tersedia.</string>
+    <string name="lyrics_bold_synced_title">Font tebal untuk lirik tersinkron</string>
+    <string name="lyrics_bold_synced_summary">Tampilkan lirik tersinkron dengan font tebal.</string>
+    <string name="lyrics_resume_on_seek_title">Lanjutkan saat seek</string>
+    <string name="lyrics_resume_on_seek_summary">Lanjutkan pemutaran secara otomatis saat mengklik sebuah baris.</string>
 </resources>
