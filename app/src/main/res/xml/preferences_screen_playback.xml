@@ -220,6 +220,16 @@
             app:key="mp3_index_seeking"/>
 
         <SwitchPreferenceCompat
+            app:icon="@drawable/ic_notifications_24dp"
+            app:title="@string/floating_notification_title"
+            app:summary="@string/floating_notification_summary"
+            app:defaultValue="false"
+            app:layout="@layout/list_item_view"
+            app:widgetLayout="@layout/preference_switch"
+            app:key="floating_notification"/>
+
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="true"
             app:title="@string/stop_when_closed_from_recents_title"
             app:summary="@string/stop_when_closed_from_recents_summary"
             app:defaultValue="false"

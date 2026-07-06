@@ -232,6 +232,7 @@ abstract class AbsRecyclerViewFragment<A : RecyclerView.Adapter<*>, LM : Recycle
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_search -> findNavController().navigate(R.id.nav_search)
             R.id.action_settings -> findNavController().navigate(R.id.nav_settings)
             R.id.action_scan -> mainActivity.scanAllPaths()
             R.id.action_equalizer -> findNavController().navigate(R.id.nav_equalizer)

@@ -96,6 +96,7 @@ import com.mardous.booming.playback.renderer.BoomingMusicRenderersFactory
 import com.mardous.booming.ui.screen.MainActivity
 import com.mardous.booming.util.CLEAR_QUEUE_ON_COMPLETION
 import com.mardous.booming.util.ENABLE_HISTORY
+import com.mardous.booming.util.FLOATING_NOTIFICATION
 import com.mardous.booming.util.IGNORE_AUDIO_FOCUS
 import com.mardous.booming.util.MP3_INDEX_SEEKING
 import com.mardous.booming.util.PAUSE_ON_ZERO_VOLUME
@@ -205,6 +206,9 @@ class PlaybackService :
             else -> customCommands[2]
         }
 
+    private val quitCommand: CommandButton
+        get() = customCommands[5]
+
     private val pauseOnZeroVolume: Boolean
         get() = preferences.getBoolean(PAUSE_ON_ZERO_VOLUME, false)
     private val sequentialTimeline: Boolean
@@ -241,6 +245,10 @@ class PlaybackService :
             CommandButton.Builder(CommandButton.ICON_REPEAT_ONE)
                 .setDisplayName(getString(R.string.repeat_mode))
                 .setPlayerCommand(Player.COMMAND_SET_REPEAT_MODE, Player.REPEAT_MODE_OFF)
+                .build(),
+            CommandButton.Builder(CommandButton.ICON_STOP)
+                .setDisplayName(getString(R.string.action_quit))
+                .setSessionCommand(SessionCommand(Playback.QUIT, Bundle.EMPTY))
                 .build()
         )
 
@@ -403,6 +411,7 @@ class PlaybackService :
         availableCommands.add(SessionCommand(Playback.RESTORE_PLAYBACK, Bundle.EMPTY))
         availableCommands.add(SessionCommand(Playback.SET_UNSHUFFLED_ORDER, Bundle.EMPTY))
         availableCommands.add(SessionCommand(Playback.SET_STOP_POSITION, Bundle.EMPTY))
+        availableCommands.add(SessionCommand(Playback.QUIT, Bundle.EMPTY))
 
         return MediaSession.ConnectionResult.accept(
             availableCommands.build(),
@@ -623,6 +632,11 @@ class PlaybackService :
 
             Playback.TOGGLE_FAVORITE -> {
                 toggleFavorite()
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
+
+            Playback.QUIT -> {
+                quit()
                 Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
             }
 
@@ -881,6 +895,10 @@ class PlaybackService :
                 player.exoPlayer.setSeekForwardIncrementMs(seekInterval)
             }
 
+            FLOATING_NOTIFICATION -> {
+                createNotificationChannel()
+            }
+
             WIDGET_DYNAMIC_COLORS,
             WIDGET_SMALL_LAYOUT_STYLE,
             WIDGET_IMAGE_CORNER_RADIUS,
@@ -901,6 +919,11 @@ class PlaybackService :
             Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
             else -> Player.REPEAT_MODE_OFF
         }
+    }
+
+    private fun quit() {
+        // Stop playback, leave the foreground state and remove the media notification.
+        pauseAllPlayersAndStopSelf()
     }
 
     private fun toggleFavorite() = serviceScope.launch {
@@ -1039,21 +1062,36 @@ class PlaybackService :
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
+    private val floatingNotification: Boolean
+        get() = preferences.getBoolean(FLOATING_NOTIFICATION, false)
+
     private fun createNotificationChannel() {
-        var notificationChannel = nm.getNotificationChannel(CHANNEL_ID)
-        if (notificationChannel == null) {
-            notificationChannel = NotificationChannel(
-                CHANNEL_ID,
-                getString(R.string.playing_notification_name),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.playing_notification_description)
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-                    setShowBadge(false)
-                }
-            }
-            nm.createNotificationChannel(notificationChannel)
+        val desiredImportance = if (floatingNotification) {
+            NotificationManager.IMPORTANCE_HIGH
+        } else {
+            NotificationManager.IMPORTANCE_LOW
         }
+        val existingChannel = nm.getNotificationChannel(CHANNEL_ID)
+        // The importance of an existing channel cannot be raised programmatically, so the channel
+        // has to be recreated whenever the "floating notification" preference toggles it.
+        if (existingChannel != null && existingChannel.importance != desiredImportance) {
+            nm.deleteNotificationChannel(CHANNEL_ID)
+        } else if (existingChannel != null) {
+            return
+        }
+        val notificationChannel = NotificationChannel(
+            CHANNEL_ID,
+            getString(R.string.playing_notification_name),
+            desiredImportance
+        ).apply {
+            description = getString(R.string.playing_notification_description)
+            setSound(null, null)
+            enableVibration(false)
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+                setShowBadge(false)
+            }
+        }
+        nm.createNotificationChannel(notificationChannel)
     }
 
     private fun refreshMediaButtonCustomLayout() {
@@ -1061,7 +1099,7 @@ class PlaybackService :
         mediaSession?.connectedControllers?.forEach { controllerInfo ->
             if (mediaSession?.isRemoteController(controllerInfo) == true) {
                 val buttonLayout = if (hasTimeline) {
-                    ImmutableList.of(repeatCommand, shuffleCommand)
+                    ImmutableList.of(repeatCommand, shuffleCommand, quitCommand)
                 } else {
                     emptyList()
                 }

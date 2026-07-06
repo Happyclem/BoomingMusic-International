@@ -312,9 +312,15 @@ class HomeFragment : AbsMainActivityFragment(R.layout.fragment_home),
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == R.id.action_settings) {
-            findNavController().navigate(R.id.nav_settings)
-            return true
+        when (menuItem.itemId) {
+            R.id.action_search -> {
+                findNavController().navigate(R.id.nav_search)
+                return true
+            }
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.nav_settings)
+                return true
+            }
         }
         return false
     }

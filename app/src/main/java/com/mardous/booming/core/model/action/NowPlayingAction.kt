@@ -92,6 +92,14 @@ enum class NowPlayingAction(
         iconRes = R.drawable.ic_fast_forward_24dp,
         titleRes = R.string.action_seek_forward
     ),
+    PreviousAlbum(
+        iconRes = R.drawable.ic_previous_24dp,
+        titleRes = R.string.action_previous_album
+    ),
+    NextAlbum(
+        iconRes = R.drawable.ic_next_24dp,
+        titleRes = R.string.action_next_album
+    ),
     Nothing(
         iconRes = R.drawable.ic_close_24dp,
         titleRes = R.string.label_nothing

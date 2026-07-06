@@ -203,6 +203,9 @@ class SearchAdapter(
 
                         override fun onPreparePopup(menu: Menu) {
                             menu.removeItem(R.id.action_play)
+                            // Only songs can start playback of the whole library from their position.
+                            menu.findItem(R.id.action_play_from_here)
+                                ?.isVisible = dataSet[bindingAdapterPosition] is Song
                         }
 
                         override fun onMenuItemClick(item: MenuItem): Boolean {

@@ -7,6 +7,7 @@
     <string name="app_widget_full">Full</string>
     <string name="app_widget_full_desc">The player screen directly on your desktop</string>
     <string name="action_play">Play</string>
+    <string name="action_play_from_here">Play all songs from here</string>
     <string name="action_play_all">Play all</string>
     <string name="action_shuffle_play">Shuffle play</string>
     <string name="action_queue_next">Queue next</string>
@@ -21,6 +22,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_seek_backward">Seek backward</string>
     <string name="action_seek_forward">Seek forward</string>
+    <string name="action_previous_album">Previous album</string>
+    <string name="action_next_album">Next album</string>
     <string name="action_cycle_repeat">Cycle repeat mode</string>
     <string name="action_toggle_shuffle">Toggle shuffle mode</string>
     <string name="reset_action">Reset</string>
@@ -57,6 +60,9 @@
     <string name="playback_stopped_title">Playback stopped</string>
     <string name="playing_notification_description">The playing notification provides actions for play/pause etc.</string>
     <string name="playing_notification_name">Playing notification</string>
+    <string name="action_quit">Close</string>
+    <string name="floating_notification_title">Floating notification</string>
+    <string name="floating_notification_summary">Show the playback notification as a floating (heads-up) banner when a new song starts.</string>
     <string name="action_scan_directory">Scan directory</string>
     <string name="no_device_playlists">No playlists</string>
     <string name="select_songs_title">Select songs</string>

@@ -269,6 +269,10 @@ class SearchFragment : AbsMainActivityFragment(R.layout.fragment_search),
     }
 
     override fun songMenuItemClick(song: Song, menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == R.id.action_play_from_here) {
+            viewModel.playFromLibrary(song)
+            return true
+        }
         return song.onSongMenu(this, menuItem)
     }
 

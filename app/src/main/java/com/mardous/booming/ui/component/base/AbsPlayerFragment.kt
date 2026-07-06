@@ -535,6 +535,16 @@ abstract class AbsPlayerFragment(@LayoutRes layoutRes: Int) : Fragment(layoutRes
                 true
             }
 
+            NowPlayingAction.PreviousAlbum -> {
+                playerViewModel.seekToPreviousAlbum()
+                true
+            }
+
+            NowPlayingAction.NextAlbum -> {
+                playerViewModel.seekToNextAlbum()
+                true
+            }
+
             NowPlayingAction.Nothing -> false
         }
     }

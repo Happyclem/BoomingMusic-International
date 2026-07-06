@@ -8,19 +8,25 @@
 
 > 🌍 **This is a community fork of [Booming Music](https://github.com/mardous/BoomingMusic) by
 > [Christians Martínez Alvarado (mardous)](https://github.com/mardous).** It adds **multilingual
-> lyrics** features on top of the original app. All credit for Booming Music goes to the upstream
-> project; this fork only layers the extras described in
-> [🌐 Multilingual lyrics (this fork)](#-multilingual-lyrics-this-fork) and stays **GPLv3**.
-> Upstream issues: [#474](https://github.com/mardous/BoomingMusic/issues/474),
+> lyrics** features plus a handful of **playback & interface** improvements on top of the original
+> app. All credit for Booming Music goes to the upstream project; this fork only layers the extras
+> described in [🌐 Multilingual lyrics (this fork)](#-multilingual-lyrics-this-fork) and
+> [🎧 Playback & interface improvements (this fork)](#-playback--interface-improvements-this-fork),
+> and stays **GPLv3**. Upstream issues:
+> [#363](https://github.com/mardous/BoomingMusic/issues/363),
+> [#386](https://github.com/mardous/BoomingMusic/issues/386),
+> [#433](https://github.com/mardous/BoomingMusic/issues/433),
+> [#444](https://github.com/mardous/BoomingMusic/issues/444),
+> [#474](https://github.com/mardous/BoomingMusic/issues/474),
 > [#475](https://github.com/mardous/BoomingMusic/issues/475).
 
 </div>
 
 > 💌 **To the original developers, authors and contributors of Booming Music:** thank you for the
 > app this fork is built on. You are warmly welcome to take this fork as a whole, or cherry-pick any
-> part of the multilingual-lyrics work described below, back into upstream or into anything else —
-> no permission needed and no strings attached. It is all offered under the same **GPLv3** license,
-> and we'd be delighted to see it land upstream.
+> part of the multilingual-lyrics work or the playback & interface improvements described below, back
+> into upstream or into anything else — no permission needed and no strings attached. It is all
+> offered under the same **GPLv3** license, and we'd be delighted to see it land upstream.
 
 ## 🌐 Multilingual lyrics (this fork)
 
@@ -88,6 +94,28 @@ on any track:
 > The Imagine Dragons "Bones" sample ships only the `.lrc`/`.ttml` lyric files (no audio); bring your
 > own copy of the track to play along. See
 > [`samples/multilingual-lyrics/README.md`](samples/multilingual-lyrics/README.md) for details.
+
+## 🎧 Playback & interface improvements (this fork)
+
+Beyond lyrics, this fork adds a few playback and navigation quality-of-life changes. Several of them
+address open requests on the upstream tracker.
+
+- **✖️ Close button on the media notification** — the playback notification now has a stop button that
+  fully stops playback and dismisses the notification, so it no longer lingers after you leave the app.
+- **🔔 Floating notification (optional)** — **Settings → Playback → Floating notification** lets the
+  playback notification pop up as a heads-up banner when a new song starts. Off by default.
+- **🔎 Visible search button** — a search icon is now shown in the top bar of every main screen (Home,
+  Songs, Albums, Artists, Playlists, Genres, Years, Folders) for direct, discoverable access to search.
+  Upstream [#363](https://github.com/mardous/BoomingMusic/issues/363).
+- **▶️ Play the whole library from a search result** — a song's menu in search results offers **Play
+  all songs from here**, starting playback of your entire library at the chosen track. Upstream
+  [#386](https://github.com/mardous/BoomingMusic/issues/386).
+- **⏮️⏭️ Previous / Next album actions** — two new assignable actions jump to the first track of the
+  adjacent album in the queue. Assign them to a cover gesture in **Settings** (tap, double-tap, long
+  press, edge double-tap). Upstream [#444](https://github.com/mardous/BoomingMusic/issues/444).
+- **🐛 Long-track duration fix** — the total-time label no longer gets clipped for tracks lasting
+  10 minutes or more on the Now Playing screen. Upstream
+  [#433](https://github.com/mardous/BoomingMusic/issues/433).
 
 ### 🛠️ Build it yourself
 

@@ -38,6 +38,7 @@ import com.mardous.booming.data.model.Song
 import com.mardous.booming.playback.Playback
 import com.mardous.booming.playback.getQueueItems
 import com.mardous.booming.playback.ProgressObserver
+import com.mardous.booming.playback.song
 import com.mardous.booming.core.model.shuffle.OpenShuffleMode
 import com.mardous.booming.playback.shuffle.ShuffleManager
 import com.mardous.booming.playback.toMediaItems
@@ -352,6 +353,69 @@ class PlayerViewModel(
 
     fun seekToPrevious() {
         mediaController?.seekToPrevious()
+    }
+
+    /**
+     * Jumps to the first track of the next album in the playing queue (respecting the
+     * current play order). Does nothing if there is no following album. See issue
+     * mardous/BoomingMusic#444.
+     */
+    fun seekToNextAlbum() {
+        val controller = mediaController ?: return
+        val queueItems = controller.getQueueItems()
+        if (queueItems.isEmpty()) return
+
+        val currentPos = queueItems.indexOfFirst { it.indexInTimeline == controller.currentMediaItemIndex }
+        if (currentPos == -1) return
+
+        val currentAlbumId = queueItems[currentPos].mediaItem.song.albumId
+        val nextAlbumStart = queueItems
+            .drop(currentPos + 1)
+            .firstOrNull { it.mediaItem.song.albumId != currentAlbumId }
+            ?: return
+
+        controller.seekToDefaultPosition(nextAlbumStart.indexInTimeline)
+    }
+
+    /**
+     * Jumps to the first track of the current album, or – if already on it – to the first
+     * track of the previous album in the playing queue. Mirrors the behaviour of skipping
+     * to the previous track but at album level. See issue mardous/BoomingMusic#444.
+     */
+    fun seekToPreviousAlbum() {
+        val controller = mediaController ?: return
+        val queueItems = controller.getQueueItems()
+        if (queueItems.isEmpty()) return
+
+        val currentPos = queueItems.indexOfFirst { it.indexInTimeline == controller.currentMediaItemIndex }
+        if (currentPos == -1) return
+
+        val currentAlbumId = queueItems[currentPos].mediaItem.song.albumId
+        // Index (in play order) of the first track that belongs to the current album.
+        var currentAlbumStart = currentPos
+        while (currentAlbumStart > 0 &&
+            queueItems[currentAlbumStart - 1].mediaItem.song.albumId == currentAlbumId) {
+            currentAlbumStart--
+        }
+
+        val target = if (currentPos > currentAlbumStart) {
+            // Not on the first track of the album yet: restart the current album.
+            queueItems[currentAlbumStart]
+        } else if (currentAlbumStart == 0) {
+            // Already at the very first album of the queue: just restart it.
+            queueItems[0]
+        } else {
+            // Already at the album start: move to the beginning of the previous album.
+            val previousAlbumId = queueItems[currentAlbumStart - 1].mediaItem.song.albumId
+            var previousAlbumStart = currentAlbumStart - 1
+            while (previousAlbumStart > 0 &&
+                queueItems[previousAlbumStart - 1].mediaItem.song.albumId == previousAlbumId) {
+                previousAlbumStart--
+            }
+            queueItems[previousAlbumStart]
+        }
+
+        controller.seekToDefaultPosition(target.indexInTimeline)
     }
 
     fun seekForward() {

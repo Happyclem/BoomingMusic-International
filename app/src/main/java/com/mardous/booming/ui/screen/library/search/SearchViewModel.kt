@@ -66,6 +66,16 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
         _queueFlow.emit(Triple(songs, startPos, Preferences.songClickAction))
     }
 
+    /**
+     * Plays the whole library starting from the given [song], regardless of the current
+     * search results. See issue mardous/BoomingMusic#386.
+     */
+    fun playFromLibrary(song: Song) = viewModelScope.launch(Dispatchers.IO) {
+        val songs = repository.allSongs()
+        val startPos = songs.indexOfSong(song.id).coerceAtLeast(0)
+        _queueFlow.emit(Triple(songs, startPos, SongClickBehavior.PlayWholeList))
+    }
+
     fun refresh() {
         searchQuery.value = searchQuery.value.copy(timestamp = System.currentTimeMillis())
     }
