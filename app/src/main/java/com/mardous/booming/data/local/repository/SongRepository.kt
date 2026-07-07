@@ -23,6 +23,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.AudioColumns
@@ -31,8 +32,11 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import com.mardous.booming.core.sort.SongSortMode
 import com.mardous.booming.data.local.MediaQueryDispatcher
+import com.mardous.booming.data.local.MetadataReader
 import com.mardous.booming.data.local.room.InclExclDao
 import com.mardous.booming.data.local.room.InclExclEntity
+import com.mardous.booming.data.local.room.SongTagCacheDao
+import com.mardous.booming.data.local.room.SongTagCacheEntity
 import com.mardous.booming.data.model.Album
 import com.mardous.booming.data.model.Song
 import com.mardous.booming.extensions.files.getCanonicalPathSafe
@@ -60,7 +64,8 @@ interface SongRepository {
 @SuppressLint("InlinedApi")
 class RealSongRepository(
     private val context: Context,
-    private val inclExclDao: InclExclDao
+    private val inclExclDao: InclExclDao,
+    private val songTagCacheDao: SongTagCacheDao
 ) : SongRepository {
 
     override fun songs(): List<Song> {
@@ -314,7 +319,7 @@ class RealSongRepository(
         val albumArtistName = cursor.getStringSafe(AudioColumns.ALBUM_ARTIST)
         val genreName = cursor.getStringSafe(AudioColumns.GENRE)
         val volumeName = cursor.getStringSafe(AudioColumns.VOLUME_NAME)
-        return Song(
+        val song = Song(
             id,
             data,
             title,
@@ -332,6 +337,108 @@ class RealSongRepository(
             genreName,
             volumeName
         )
+        return if (Preferences.preferFileTags) enrichFromFileTags(song) else song
+    }
+
+    /**
+     * Android's MediaStore scanner is unreliable at reading ID3v2.4 tags: fields
+     * that are perfectly valid in the file (title, artist, year, …) can come back
+     * empty or wrong (see mardous/BoomingMusic#178 and #25). TagLib parses both
+     * ID3v2.3 and v2.4 correctly, so we read the display fields straight from the
+     * file and let them override what MediaStore reported.
+     *
+     * Because this reads every file, the result is cached in Room keyed on the
+     * MediaStore id and [Song.rawDateModified]; only new or changed files are read
+     * from disk, so after the first scan subsequent library loads are cheap.
+     *
+     * Prototype notes:
+     *  - The song list/album/artist grouping still uses MediaStore ids; only the
+     *    displayed strings are overridden. Consistent tags group fine, but a fully
+     *    tag-based grouping would be the next step.
+     *  - The cache is looked up one row at a time; a batch pre-load keyed by the
+     *    current cursor would cut per-song query overhead on very large libraries.
+     */
+    private fun enrichFromFileTags(song: Song): Song {
+        // Reading tags and touching Room are blocking operations; never run them on
+        // the main thread. Library loads are dispatched to IO, so the enrichment
+        // still applies there — any stray main-thread lookup just keeps MediaStore's
+        // values, exactly as before this feature existed.
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            return song
+        }
+        val cached = runCatching { songTagCacheDao.get(song.id) }.getOrNull()
+        val tags = if (cached != null && cached.dateModified == song.rawDateModified) {
+            cached
+        } else {
+            readAndCacheTags(song)
+        }
+        return tags?.applyTo(song) ?: song
+    }
+
+    private fun readAndCacheTags(song: Song): SongTagCacheEntity? {
+        val reader = runCatching { MetadataReader(song.uri) }.getOrNull()
+        if (reader == null || !reader.hasMetadata) {
+            return null
+        }
+        val entity = SongTagCacheEntity(
+            id = song.id,
+            dateModified = song.rawDateModified,
+            title = reader.value(MetadataReader.TITLE),
+            artist = reader.value(MetadataReader.ARTIST),
+            album = reader.value(MetadataReader.ALBUM),
+            albumArtist = reader.value(MetadataReader.ALBUM_ARTIST),
+            year = reader.first(MetadataReader.YEAR).parseYear(),
+            genre = reader.genre()
+        )
+        runCatching { songTagCacheDao.upsert(entity) }
+        return entity
+    }
+
+    /**
+     * Overlays the cached file tags onto [song], preferring a tag value whenever it
+     * is present and falling back to MediaStore's value otherwise. Returns [song]
+     * unchanged when nothing differs, so healthy libraries keep object identity.
+     */
+    private fun SongTagCacheEntity.applyTo(song: Song): Song {
+        val newTitle = title?.takeIf { it.isNotBlank() } ?: song.title
+        val newArtist = artist?.takeIf { it.isNotBlank() } ?: song.artistName
+        val newAlbum = album?.takeIf { it.isNotBlank() } ?: song.albumName
+        val newAlbumArtist = albumArtist?.takeIf { it.isNotBlank() } ?: song.albumArtistName
+        val newYear = if (year > 0) year else song.year
+        val newGenre = genre?.takeIf { it.isNotBlank() } ?: song.genreName
+        if (newTitle == song.title && newArtist == song.artistName && newAlbum == song.albumName &&
+            newAlbumArtist == song.albumArtistName && newYear == song.year && newGenre == song.genreName
+        ) {
+            return song
+        }
+        return Song(
+            song.id,
+            song.data,
+            newTitle,
+            song.trackNumber,
+            newYear,
+            song.size,
+            song.duration,
+            song.dateAdded,
+            song.rawDateModified,
+            song.albumId,
+            newAlbum,
+            song.artistId,
+            newArtist,
+            newAlbumArtist,
+            newGenre,
+            song.volumeName
+        )
+    }
+
+    /**
+     * Extracts a 4-digit year from a tag date value. Handles a plain year
+     * ("1997"), ISO dates ("1994-12-09") and day-first dates ("09-12-1994").
+     */
+    private fun String?.parseYear(): Int {
+        if (isNullOrBlank()) return 0
+        trim().toIntOrNull()?.let { if (it in 1000..9999) return it }
+        return Regex("\\d{4}").find(this)?.value?.toIntOrNull()?.takeIf { it in 1000..9999 } ?: 0
     }
 
     companion object {

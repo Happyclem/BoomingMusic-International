@@ -152,7 +152,8 @@ private val roomModule = module {
                 BoomingDatabase.MIGRATION_3_4,
                 BoomingDatabase.MIGRATION_4_5,
                 BoomingDatabase.MIGRATION_5_6,
-                BoomingDatabase.MIGRATION_6_7
+                BoomingDatabase.MIGRATION_6_7,
+                BoomingDatabase.MIGRATION_7_8
             )
             .build()
     }
@@ -184,6 +185,10 @@ private val roomModule = module {
     factory {
         get<BoomingDatabase>().lyricsLinkDao()
     }
+
+    factory {
+        get<BoomingDatabase>().songTagCacheDao()
+    }
 }
 
 private val dataModule = module {
@@ -203,7 +208,7 @@ private val dataModule = module {
     } bind Repository::class
 
     single {
-        RealSongRepository(context = get(), inclExclDao = get())
+        RealSongRepository(context = get(), inclExclDao = get(), songTagCacheDao = get())
     } bind SongRepository::class
 
     single {

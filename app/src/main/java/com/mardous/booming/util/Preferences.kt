@@ -408,6 +408,15 @@ object Preferences : KoinComponent {
         get() = preferences.getBoolean(BLACKLIST_ENABLED, true)
         set(value) = preferences.edit { putBoolean(BLACKLIST_ENABLED, value) }
 
+    /**
+     * When enabled, fields that Android's MediaStore scanner frequently fails to
+     * read from ID3v2.4 tags (most notably the release year) are read straight from
+     * the file with TagLib instead. See mardous/BoomingMusic#178 and #25.
+     */
+    var preferFileTags: Boolean
+        get() = preferences.getBoolean(PREFER_FILE_TAGS, true)
+        set(value) = preferences.edit { putBoolean(PREFER_FILE_TAGS, value) }
+
     val minimumSongCountForArtist: Int
         get() = preferences.getInt(ARTIST_MINIMUM_SONGS, 1)
 
@@ -621,6 +630,7 @@ const val IGNORE_SINGLES = "ignore_singles"
 const val SHOW_TOTAL_DURATION = "show_total_duration"
 const val WHITELIST_ENABLED = "whitelist_enabled"
 const val BLACKLIST_ENABLED = "blacklist_enabled"
+const val PREFER_FILE_TAGS = "prefer_file_tags"
 const val ARTIST_MINIMUM_SONGS = "artist_minimum_songs"
 const val ALBUM_MINIMUM_SONGS = "album_minimum_songs"
 const val MINIMUM_SONG_DURATION = "minimum_song_duration"
