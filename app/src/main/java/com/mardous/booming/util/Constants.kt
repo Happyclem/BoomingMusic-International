@@ -24,10 +24,14 @@ object Constants {
     const val SUPPORT_EMAIL = "mardous.contact@gmail.com"
 
     // App-related URLs
+    // Upstream project (original author) — kept for author credit, wiki content and User-Agent.
     const val AUTHOR_GITHUB_URL = "https://www.github.com/mardous"
     const val APP_GITHUB_URL = "https://www.github.com/mardous/BoomingMusic"
-    const val RELEASES_LINK = "$APP_GITHUB_URL/releases"
-    const val ISSUE_TRACKER_LINK = "$APP_GITHUB_URL/issues"
+    // This fork — releases, updates and bug reports go here so they don't burden upstream.
+    const val APP_FORK_URL = "https://www.github.com/Happyclem/BoomingMusic-International"
+    const val RELEASES_LINK = "$APP_FORK_URL/releases"
+    const val ISSUE_TRACKER_LINK = "$APP_FORK_URL/issues"
+    // Wiki pages only exist upstream, so keep these on the original repo.
     const val COMMUNITY_LINK = "$APP_GITHUB_URL/wiki/Community"
     const val FAQ_LINK = "$APP_GITHUB_URL/wiki/FAQ"
     const val TRANSLATIONS_LINK = "https://hosted.weblate.org/engage/booming-music/"

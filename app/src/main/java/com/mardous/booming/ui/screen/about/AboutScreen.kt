@@ -91,7 +91,7 @@ import com.mardous.booming.util.Constants.COMMUNITY_LINK
 import com.mardous.booming.util.Constants.DONATION_LINK
 import com.mardous.booming.util.Constants.DOWNLOAD_URL
 import com.mardous.booming.util.Constants.FAQ_LINK
-import com.mardous.booming.util.Constants.APP_GITHUB_URL
+import com.mardous.booming.util.Constants.APP_FORK_URL
 import com.mardous.booming.util.Constants.ISSUE_TRACKER_LINK
 import com.mardous.booming.util.Constants.RELEASES_LINK
 import com.mardous.booming.util.Constants.SUPPORT_EMAIL
@@ -188,7 +188,7 @@ fun AboutScreen(
                 BoomingMusicHeader(
                     version = appVersion,
                     onChangelogClick = { context.openUrl(RELEASES_LINK) },
-                    onForkClick = { context.openUrl(APP_GITHUB_URL) },
+                    onForkClick = { context.openUrl(APP_FORK_URL) },
                     onFAQClick = { context.openUrl(FAQ_LINK) },
                     onLicensesClick = { showLicensesDialog = true }
                 )
