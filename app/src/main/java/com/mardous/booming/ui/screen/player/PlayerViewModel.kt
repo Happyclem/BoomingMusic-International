@@ -401,16 +401,16 @@ class PlayerViewModel(
         val queueItems = controller.getQueueItems()
         if (queueItems.isEmpty()) return
 
-        val currentPos = queueItems.indexOfFirst { it.indexInTimeline == controller.currentMediaItemIndex }
+        val currentPos = queueItems.indexOfFirst { it.second == controller.currentMediaItemIndex }
         if (currentPos == -1) return
 
-        val currentAlbumId = queueItems[currentPos].mediaItem.song.albumId
+        val currentAlbumId = queueItems[currentPos].first.song.albumId
         val nextAlbumStart = queueItems
             .drop(currentPos + 1)
-            .firstOrNull { it.mediaItem.song.albumId != currentAlbumId }
+            .firstOrNull { it.first.song.albumId != currentAlbumId }
             ?: return
 
-        controller.seekToDefaultPosition(nextAlbumStart.indexInTimeline)
+        controller.seekToDefaultPosition(nextAlbumStart.second)
     }
 
     /**
@@ -423,14 +423,14 @@ class PlayerViewModel(
         val queueItems = controller.getQueueItems()
         if (queueItems.isEmpty()) return
 
-        val currentPos = queueItems.indexOfFirst { it.indexInTimeline == controller.currentMediaItemIndex }
+        val currentPos = queueItems.indexOfFirst { it.second == controller.currentMediaItemIndex }
         if (currentPos == -1) return
 
-        val currentAlbumId = queueItems[currentPos].mediaItem.song.albumId
+        val currentAlbumId = queueItems[currentPos].first.song.albumId
         // Index (in play order) of the first track that belongs to the current album.
         var currentAlbumStart = currentPos
         while (currentAlbumStart > 0 &&
-            queueItems[currentAlbumStart - 1].mediaItem.song.albumId == currentAlbumId) {
+            queueItems[currentAlbumStart - 1].first.song.albumId == currentAlbumId) {
             currentAlbumStart--
         }
 
@@ -442,16 +442,16 @@ class PlayerViewModel(
             queueItems[0]
         } else {
             // Already at the album start: move to the beginning of the previous album.
-            val previousAlbumId = queueItems[currentAlbumStart - 1].mediaItem.song.albumId
+            val previousAlbumId = queueItems[currentAlbumStart - 1].first.song.albumId
             var previousAlbumStart = currentAlbumStart - 1
             while (previousAlbumStart > 0 &&
-                queueItems[previousAlbumStart - 1].mediaItem.song.albumId == previousAlbumId) {
+                queueItems[previousAlbumStart - 1].first.song.albumId == previousAlbumId) {
                 previousAlbumStart--
             }
             queueItems[previousAlbumStart]
         }
 
-        controller.seekToDefaultPosition(target.indexInTimeline)
+        controller.seekToDefaultPosition(target.second)
     }
 
     fun seekForward() {
