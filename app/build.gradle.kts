@@ -94,7 +94,7 @@ android {
 
     flavorDimensions += "version"
     productFlavors {
-        create("normal") {
+        create("github") {
             dimension = "version"
 
             resValue("bool", "network_features_enabled_by_default", "true")
@@ -118,7 +118,7 @@ android {
     }
 
     sourceSets {
-        named("normal") {
+        named("github") {
             kotlin.directories.add("src/shared/java")
         }
         named("fdroid") {
@@ -226,7 +226,7 @@ androidComponents {
             variant.buildConfigFields?.put(key.toString(), BuildConfigField("String", "\"$value\"", null))
         }
 
-        val canUseLastFm = variant.flavorName == "normal" || variant.flavorName == "playstore"
+        val canUseLastFm = variant.flavorName == "github" || variant.flavorName == "playstore"
 
         val localProperties = if (canUseLastFm) getProperties("local.properties") else null
         val lastFmKey = if (canUseLastFm) {
@@ -341,17 +341,26 @@ fun getProperties(fileName: String): Properties? {
     } else null
 }
 
-fun loadFlavorProperties(flavorName: String?): Properties {
-    val props = Properties()
-    getProperties("properties/base.properties")?.let { props.putAll(it) }
-    if (!flavorName.isNullOrEmpty()) {
-        getProperties("properties/$flavorName.properties")?.let { props.putAll(it) }
-    }
-    return props
-}
-
 fun Properties.property(key: String) =
     this.getProperty(key) ?: "$key missing"
+
+fun loadFlavorProperties(flavorName: String?): Properties {
+    val finalProps = Properties()
+    val publicProperties = getProperties("public.properties")
+    if (publicProperties != null) {
+        for ((key, value) in publicProperties.entries) {
+            val keySplit = key.toString().split(".")
+            if (keySplit.size == 2) {
+                if (keySplit[0].equals(flavorName, ignoreCase = true)) {
+                    finalProps[keySplit[1]] = value
+                }
+            } else {
+                finalProps[key] = value
+            }
+        }
+    }
+    return finalProps
+}
 
 fun runGitCommand(command: String): String {
     return try {

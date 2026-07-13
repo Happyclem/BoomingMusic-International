@@ -22,8 +22,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,10 +36,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -48,14 +51,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -71,11 +77,12 @@ import com.mardous.booming.ui.component.base.AbsTagEditorActivity
 import com.mardous.booming.ui.component.base.goToDestination
 import com.mardous.booming.ui.component.compose.BottomSheetDialogSurface
 import com.mardous.booming.ui.component.compose.ErrorView
+import com.mardous.booming.ui.component.compose.ShapedText
 import com.mardous.booming.ui.component.compose.SmallHeader
+import com.mardous.booming.ui.component.compose.TitledCard
 import com.mardous.booming.ui.screen.lyrics.LyricsEditorFragmentArgs
 import com.mardous.booming.ui.screen.tageditor.SongTagEditorActivity
 import com.mardous.booming.ui.theme.BoomingMusicTheme
-import com.mardous.booming.ui.theme.SurfaceColorTokens
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 data class SongInfoUiState(
@@ -179,15 +186,26 @@ class SongDetailFragment : BottomSheetDialogFragment() {
                         SmallHeader(
                             title = uiState.info.title.orEmpty(),
                             subtitle = uiState.info.artist,
-                            additionalInfo = uiState.info.audioHeaderInfo?.let {
-                                if (it.lossless) {
-                                    "${it.format} • ${stringResource(R.string.label_loss_less)}"
-                                } else {
-                                    it.format.orEmpty()
+                            trailingContent = {
+                                AnimatedVisibility(
+                                    visible = uiState.isLoading,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                ) {
+                                    CircularWavyProgressIndicator(
+                                        stroke = Stroke(
+                                            width = with(LocalDensity.current) { 3.dp.toPx() },
+                                            cap = StrokeCap.Round
+                                        ),
+                                        trackStroke = Stroke(
+                                            width = with(LocalDensity.current) { 3.dp.toPx() },
+                                            cap = StrokeCap.Round
+                                        ),
+                                        wavelength = 10.dp,
+                                        modifier = Modifier.size(32.dp)
+                                    )
                                 }
                             },
                             imageModel = song,
-                            showIndeterminateIndicator = uiState.isLoading,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -260,8 +278,9 @@ class SongDetailFragment : BottomSheetDialogFragment() {
     @Composable
     private fun MetadataInfoSection(songInfo: SongInfo, modifier: Modifier = Modifier) {
         InfoSection(
+            icon = painterResource(R.drawable.ic_info_24dp),
             title = stringResource(R.string.metadata_label),
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
         ) {
             InfoView(
                 title = stringResource(R.string.album),
@@ -323,8 +342,9 @@ class SongDetailFragment : BottomSheetDialogFragment() {
     @Composable
     fun PlayInfoSection(songInfo: SongInfo, modifier: Modifier = Modifier) {
         InfoSection(
+            icon = painterResource(R.drawable.ic_play_circle_24dp),
             title = stringResource(R.string.play_info),
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
         ) {
             InfoView(
                 title = stringResource(R.string.played),
@@ -346,9 +366,55 @@ class SongDetailFragment : BottomSheetDialogFragment() {
     @Composable
     private fun FileInfoSection(songInfo: SongInfo, modifier: Modifier = Modifier) {
         InfoSection(
+            icon = painterResource(R.drawable.ic_audio_file_24dp),
             title = stringResource(R.string.file_label),
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
         ) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                songInfo.audioHeaderInfo?.let {
+                    if (!it.format.isNullOrBlank()) {
+                        ShapedText(
+                            text = it.format,
+                            style = MaterialTheme.typography.bodySmall,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            shape = CircleShape
+                        )
+                    }
+                    if (it.lossless) {
+                        ShapedText(
+                            text = stringResource(R.string.label_loss_less),
+                            style = MaterialTheme.typography.bodySmall,
+                            shape = CircleShape
+                        )
+                    }
+                    if (!it.bitrate.isNullOrBlank()) {
+                        ShapedText(
+                            text = if (it.variableBitrate) {
+                                "${it.bitrate} • ${stringResource(R.string.label_variable_bitrate)}"
+                            } else {
+                                it.bitrate
+                            },
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            style = MaterialTheme.typography.bodySmall,
+                            shape = CircleShape
+                        )
+                    }
+                    if (!it.sampleRate.isNullOrBlank()) {
+                        ShapedText(
+                            text = it.sampleRate,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            style = MaterialTheme.typography.bodySmall,
+                            shape = CircleShape
+                        )
+                    }
+                }
+            }
+
             InfoView(
                 title = stringResource(R.string.length),
                 content = songInfo.trackLength
@@ -360,20 +426,6 @@ class SongDetailFragment : BottomSheetDialogFragment() {
             )
 
             songInfo.audioHeaderInfo?.let { headerInfo ->
-                InfoView(
-                    title = stringResource(R.string.label_bit_rate),
-                    content = if (headerInfo.variableBitrate) {
-                        "${headerInfo.bitrate} • ${stringResource(R.string.label_variable_bitrate)}"
-                    } else {
-                        headerInfo.bitrate
-                    }
-                )
-
-                InfoView(
-                    title = stringResource(R.string.label_sampling_rate),
-                    content = headerInfo.sampleRate
-                )
-
                 InfoView(
                     title = stringResource(R.string.label_channels),
                     content = headerInfo.channels
@@ -418,7 +470,6 @@ class SongDetailFragment : BottomSheetDialogFragment() {
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
                 )
@@ -437,36 +488,19 @@ class SongDetailFragment : BottomSheetDialogFragment() {
 
     @Composable
     private fun InfoSection(
+        icon: Painter,
         title: String,
         modifier: Modifier = Modifier,
-        content: @Composable () -> Unit
+        content: @Composable ColumnScope.() -> Unit
     ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                    alpha = SurfaceColorTokens.SurfaceVariantAlpha
-                )
-            ),
+        TitledCard(
+            title = title,
+            icon = icon,
             modifier = modifier
-        ) {
-            Text(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-            )
-
+        ) { contentPadding ->
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-                    .padding(top = 8.dp)
+                modifier = Modifier.padding(contentPadding)
             ) {
                 content()
             }

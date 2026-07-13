@@ -628,6 +628,11 @@
     <string name="share_app_summary">You can help this app grow if you share it with friends.</string>
     <string name="send_invitation_message">Send invitation message</string>
     <string name="invitation_message_content">Hi. Check out Booming Music! The best app to listen local music on Android. You can download it from here: %s</string>
+    <string name="contributor_dawid_description">Core contributor and designer of several key app features.</string>
+    <string name="contributor_ray_description">Contributed several exciting and key features.</string>
+    <string name="contributor_ttop_description">The project\'s very first contributor and tester.</string>
+    <string name="contributor_lenard_description">Developer of the app website and contributor.</string>
+    <string name="contributor_alex_description">Longtime friend of the project who provided access to essential APIs.</string>
 
     <!-- SAF -->
     <string name="saf_access_required_title">Storage Access Required</string>
@@ -883,6 +888,8 @@
     <string name="on_clear_queue_remove_all_songs_except_current_summary">Only the currently playing song will remain in the queue.</string>
     <string name="clear_queue_on_completion_title">Clear queue when playback finishes</string>
     <string name="clear_queue_on_completion_summary">Automatically remove all songs from the queue after the last track finishes playing.</string>
+    <string name="play_all_songs_when_searching_title">Play all songs when searching</string>
+    <string name="play_all_songs_when_searching_summary">When enabled, selecting a searched song queues the entire library. Subject to the "When selecting a song" setting.</string>
 
     <!-- Metadata preferences -->
     <string name="ignore_media_store_album_covers_title">Ignore Media Store covers</string>
