@@ -306,6 +306,8 @@ dependencies {
     implementation(libs.coil.transformations)
 
     implementation(libs.balloon)
+    implementation(libs.scrollbar)
+    implementation(libs.reorderable)
     implementation(libs.compose.markdown)
     implementation(libs.aboutlibraries)
 

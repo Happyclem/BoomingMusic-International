@@ -302,8 +302,6 @@
     <string name="playlist_locked">Playlist Bloqueada</string>
     <string name="playlist_unlocked">Playlist Desbloqueada</string>
     <string name="action_toggle_queue_lock">Bloquear/desbloquear fila</string>
-    <string name="queue_locked">Fila bloqueada</string>
-    <string name="queue_unlocked">Fila desbloqueada</string>
     <!-- Audio output devices-->
     <string name="audio_device_aux_line">Entrada Auxiliar</string>
     <string name="audio_device_bluetooth_a2dp">Bluetooth A2DP</string>
@@ -624,8 +622,6 @@
     <string name="circle_button_title">Botão de reprodução redondo</string>
     <string name="swipe_album_cover_title">Deslize sobre a capa do álbum</string>
     <string name="swipe_album_cover_summary">Deslize para a esquerda ou para a direita na capa do álbum para mudar de música.</string>
-    <string name="queue_height_title">Altura da fila em meia-tela</string>
-    <string name="queue_height_summary">Define a altura da fila de reprodução para metade da tela.</string>
     <string name="single_tap_on_album_cover_title">Toque único na capa</string>
     <string name="double_tap_on_album_cover_title">Toque duplo na capa</string>
     <string name="double_tap_on_left_album_cover_title">Toque duplo na borda esquerda da capa</string>
@@ -965,4 +961,11 @@
     <string name="lyrics_show_transliteration_summary">Exibir letra transliterada, se disponível.</string>
     <string name="lyrics_resume_on_seek_title">Retomar a partir da posição atual</string>
     <string name="lyrics_resume_on_seek_summary">Retomar a reprodução automaticamente ao clicar em uma linha.</string>
+    <string name="contributor_dawid_description">Colaborador principal e designer de vários recursos importantes do aplicativo.</string>
+    <string name="contributor_ray_description">Contribuiu com vários recursos importantes e empolgantes.</string>
+    <string name="contributor_ttop_description">O primeiro colaborador e testador do projeto.</string>
+    <string name="contributor_lenard_description">Desenvolvedor do site do aplicativo e colaborador.</string>
+    <string name="contributor_alex_description">Amigo de longa data do projeto que forneceu acesso a APIs essenciais.</string>
+    <string name="play_all_songs_when_searching_title">Reproduzir todas as músicas ao pesquisar</string>
+    <string name="play_all_songs_when_searching_summary">Quando ativado, selecionar uma música pesquisada coloca toda a biblioteca na fila. Sujeito à configuração \"Ao selecionar uma música\".</string>
 </resources>
