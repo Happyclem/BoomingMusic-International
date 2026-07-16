@@ -95,3 +95,4 @@ get_weblate_translators.py
 # Scratch test scripts/output for the standalone JVM lyrics harness
 /tools/jvm-lyrics-test/.gradle/
 /tools/jvm-lyrics-test/build/
+SYNCING_UPSTREAM.md

@@ -9,6 +9,42 @@ changes without losing our work.
 > (see [Build & verify on Windows](#build--verify-on-windows) for the `JAVA_HOME` setup). The
 > commands are the same on macOS/Linux, just use `./gradlew` instead of `.\gradlew.bat`.
 
+## ⚡ Version rapide (celle que tu utiliseras le plus souvent)
+
+La mise à jour courante depuis upstream. Colle chaque bloc dans le **terminal PowerShell de
+VSCode**. Pour les détails, les cas de conflit et le build de release signé, voir les sections
+complètes plus bas.
+
+**1. Mettre à jour l'app** — merge upstream, vérifie que ça compile, puis pousse **seulement si la
+compilation réussit** :
+
+```powershell
+git checkout master
+git fetch upstream
+git branch -f backup-before-upstream-merge master
+git merge upstream/master --no-edit
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot"
+.\gradlew.bat :app:compileGithubDebugKotlin
+if ($LASTEXITCODE -eq 0) { git push origin master; Write-Host ">>> OK : fusionne + pousse. Tu n'es plus en retard." } else { Write-Host ">>> STOP : la compilation est cassee. Tape:  git reset --hard backup-before-upstream-merge  puis reviens vers moi." }
+```
+
+**2. Générer l'APK** (~10 min, attends `BUILD SUCCESSFUL`) :
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot"
+.\gradlew.bat :app:assembleGithubRelease --console=plain
+```
+
+**3. Ouvrir le dossier de l'APK** — prends le fichier `...-github-universal.apk` :
+
+```powershell
+explorer app\build\outputs\apk\github\release
+```
+
+> 💡 Rappels : un merge « propre » côté Git peut quand même casser la compilation (d'où l'étape de
+> vérification), et si tu **publies** l'APK, pense à monter la version dans
+> [`app/build.gradle.kts`](app/build.gradle.kts) avant le build 2.
+
 ## One-time setup
 
 Add the upstream remote (only needed once per clone):
